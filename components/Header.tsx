@@ -14,7 +14,7 @@ const Header = () => {
         <div className="w-full h-12 mb-2 bg-blue-500 top-0 flex flex-row items-center px-4 justify-between shadow-lg relative">
             {/* Burger menu button (only shown when on small devices) */}
             <button 
-                className="flex md:hidden flex-col h-12 w-12 rounded justify-center items-center group"
+                className="flex md:hidden flex-col h-12 w-12 rounded justify-center items-center group z-10"
                 onClick={() => setBurgerMenuOpen(!burgerMenuOpen)}
             >
                 {/* Three lines forming a hamburger button */}
@@ -37,7 +37,7 @@ const Header = () => {
             </button>
 
             {/* Logo */}
-            <h1 className="w-60 xl:w-96 text-2xl font-bold text-slate-50 ">
+            <h1 className="w-60 xl:w-96 text-2xl font-bold text-slate-50 z-10">
                 <Link href="/">
                     TEACHER'S TOOLKIT
                 </Link>
@@ -60,9 +60,7 @@ const Header = () => {
 
             {
                 // Only show menu when button is active
-                burgerMenuOpen && (
-                    <Menu  />
-                )
+                <Menu active={burgerMenuOpen} />
             }
         </div>
     )

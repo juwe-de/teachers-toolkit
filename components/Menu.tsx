@@ -3,9 +3,16 @@ import Image from "next/image"
 
 import { AiOutlineSearch } from "react-icons/ai"
 
-const Menu = () => {
+import { NextComponentType } from "next"
+import { FunctionComponent } from "react"
+
+type Props = {
+    active : boolean,
+}
+
+const Menu : FunctionComponent<Props> = ({ active }) => {
     return (
-        <div className="absolute top-12 left-0 p-2 backdrop-blur-md w-full h-60 border border-zinc-500 flex flex-col space-y-4 justify-center items-center transition translate ease-in duration-300">
+        <div className={`${active ? "opacity-100 translate-y-0 backdrop-blur-md" : "opacity-0 -translate-y-72 backdrop-blur-none"} z-0 md:hidden absolute top-12 left-0 p-2 w-full h-60 border border-zinc-500 flex flex-col space-y-4 justify-center items-center transition translate ease-in duration-300`}>
             {/* Profile picture */}
             <Image src="/profile.jpg" alt={"Profilbild"} width={50} height={50} className="rounded-full border-4 border-stone-900" />
 
