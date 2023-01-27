@@ -3,7 +3,7 @@ import { FunctionComponent } from "react"
 
 const Footer : FunctionComponent = () => {
     return (
-        <div className="w-full h-40 bg-slate-900 flex flex-col py-3 items-center justify-center text-slate-50 space-y-5 md: space-y-10">
+        <div className="w-full h-40 bg-slate-900 flex flex-col py-3 items-center justify-center text-slate-50 space-y-5 md:space-y-10">
             <div className="flex flex-col items-center">
                 <h1 className="text-lg font-semibold">DESIGNED BY THE HEINIS</h1>
                 <p className="text-sm">2023</p>
