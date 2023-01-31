@@ -9,3 +9,116 @@ datasource db {
   provider = "sqlite"
   url      = env("DATABASE_URL")
 }
+
+model Student {
+  id                   String                 @id @default(cuid())
+  namne                String
+  sirname              String
+  gender               Int
+  dateOfBirth          DateTime
+  visuals              Int
+  course_participation Course_Participation[]
+  seats                Seat[]
+  group_member         Group_Member[]
+  annotations          Annotation[]
+  answers              Answer[]
+}
+
+model Course {
+  id                   String                 @id @default(cuid())
+  title                String
+  subject              String
+  year                 Int
+  created              DateTime               @default(now())
+  quantityValue        Int                    @default(50)
+  course_participation Course_Participation[]
+  seatingplans         Seatingplan[]
+  groupings            Grouping[]
+  sessions             Session[]
+}
+
+model Course_Participation {
+  student   Student @relation(fields: [studentId], references: [id])
+  studentId String
+  course    Course  @relation(fields: [courseId], references: [id])
+  courseId  String
+
+  @@id([studentId, courseId])
+}
+
+model Seatingplan {
+  id       String   @id @default(cuid())
+  course   Course   @relation(fields: [courseId], references: [id])
+  courseId String
+  title    String
+  created  DateTime @default(now())
+  seats    Seat[]
+}
+
+model Seat {
+  seatingplan   Seatingplan @relation(fields: [seatingplanId], references: [id])
+  seatingplanId String
+  student       Student     @relation(fields: [studentId], references: [id])
+  studentId     String
+  index         Int
+
+  @@id([seatingplanId, studentId])
+}
+
+model Grouping {
+  id       String   @id @default(cuid())
+  title    String
+  created  DateTime @default(now())
+  course   Course   @relation(fields: [courseId], references: [id])
+  courseId String
+  groups   Group[]
+}
+
+model Group {
+  id           String         @id @default(cuid())
+  grouping     Grouping       @relation(fields: [groupingId], references: [id])
+  groupingId   String
+  groupSize    Int
+  title        String
+  group_member Group_Member[]
+}
+
+model Group_Member {
+  group     Group   @relation(fields: [groupId], references: [id])
+  student   Student @relation(fields: [studentId], references: [id])
+  groupId   String
+  studentId String
+
+  @@id([studentId, groupId])
+}
+
+model Session {
+  id          String       @id @default(cuid())
+  course      Course       @relation(fields: [courseId], references: [id])
+  courseId    String
+  date        DateTime     @default(now())
+  duration    Int
+  topic       String
+  description String
+  annotations Annotation[]
+  answers     Answer[]
+}
+
+model Annotation {
+  id          String  @id @default(cuid())
+  session     Session @relation(fields: [sessionId], references: [id])
+  sessionId   String
+  student     Student @relation(fields: [studentId], references: [id])
+  studentId   String
+  type        Int
+  description String
+}
+
+model Answer {
+  id        String  @id @default(cuid())
+  session   Session @relation(fields: [sessionId], references: [id])
+  sessionId String
+  student   Student @relation(fields: [studentId], references: [id])
+  studentId String
+  quality   Int
+}
