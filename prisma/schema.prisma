@@ -12,10 +12,10 @@ datasource db {
 
 model Student {
   id                   String                 @id @default(cuid())
-  namne                String
+  name                 String
   sirname              String
   gender               Int
-  dateOfBirth          DateTime
+  dateOfBirth          String
   visuals              Int
   course_participation Course_Participation[]
   seats                Seat[]
@@ -29,7 +29,7 @@ model Course {
   title                String
   subject              String
   year                 Int
-  created              DateTime               @default(now())
+  created              String
   quantityValue        Int                    @default(50)
   course_participation Course_Participation[]
   seatingplans         Seatingplan[]
@@ -47,11 +47,11 @@ model Course_Participation {
 }
 
 model Seatingplan {
-  id       String   @id @default(cuid())
-  course   Course   @relation(fields: [courseId], references: [id])
+  id       String @id @default(cuid())
+  course   Course @relation(fields: [courseId], references: [id])
   courseId String
   title    String
-  created  DateTime @default(now())
+  created  String
   seats    Seat[]
 }
 
@@ -66,10 +66,10 @@ model Seat {
 }
 
 model Grouping {
-  id       String   @id @default(cuid())
+  id       String  @id @default(cuid())
   title    String
-  created  DateTime @default(now())
-  course   Course   @relation(fields: [courseId], references: [id])
+  created  String
+  course   Course  @relation(fields: [courseId], references: [id])
   courseId String
   groups   Group[]
 }
@@ -96,7 +96,7 @@ model Session {
   id          String       @id @default(cuid())
   course      Course       @relation(fields: [courseId], references: [id])
   courseId    String
-  date        DateTime     @default(now())
+  date        String
   duration    Int
   topic       String
   description String
