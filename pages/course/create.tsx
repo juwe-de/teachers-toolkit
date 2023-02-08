@@ -6,18 +6,20 @@ import { FormEvent, useState } from "react"
 import DatePicker from "react-datepicker"
 import "react-datepicker/dist/react-datepicker.css"
 
+import { useRouter } from "next/router"
+
 import { MdOutlineInfo, MdCancel } from "react-icons/md"
 import { AiOutlineCheck } from "react-icons/ai"
 import { RxCross1 } from "react-icons/rx"
 import { BiSave } from "react-icons/bi" 
-
-import prisma from "../../components/Client"
 
 const Create = () => {
 
     interface student {
         name: string, sirname: string, gender: number, dateOfBirth: number, visuals: number
     }
+
+    const router = useRouter()
 
     // value of the slider
     const [quantityValue, setQuantityValue] = useState(50)
@@ -86,12 +88,33 @@ const Create = () => {
         console.log(students)
     }
 
-    const save = () => {
+    const save = async () => {
+        // creating a course without students is very unusual, so ask for confirmation
+        if(students.length == 0 && !confirm("Möchtest du wirklich einen Kurs ohne Schüler erstellen?")) return
 
+        await fetch("/api/course/create", {
+            body: JSON.stringify({
+                title: courseTitle,
+                subject: subject,
+                year: year,
+                quantityValue: quantityValue,
+                students: students
+            }),
+            headers: {
+                "Content-Type": "application/json"
+            },
+            method: "POST"
+        }).then(response => {
+            console.log(response.json)
+        })
+
+        router.push("/")
     }
 
     const cancel = () => {
-        
+        if(!confirm("Möchtest du wirklich abbrechen? Alle Informationen gehen verloren.")) return
+
+        router.push("/")
     }
 
     return(
@@ -111,14 +134,14 @@ const Create = () => {
                         {/* Title input */}
                         <div className="flex flex-col space-y-2 w-full">
                             <p className="w-full text-left text-xl text-stone-800">Kursname</p>
-                            <input className="py-1 border border-zinc-500 rounded-md bg-white w-full text-lg text-stone-800 px-2 focus:outline-none" placeholder="Unbenannter Kurs"/>
+                            <input onChange={e => setCourseTitle(e.target.value == "" ? "Unbenannter Kurs" : e.target.value)} className="py-1 border border-zinc-500 rounded-md bg-white w-full text-lg text-stone-800 px-2 focus:outline-none" placeholder="Unbenannter Kurs"/>
                         </div>
 
                         {/* year/subject select */}
                         <div className="flex flex-col md:flex-row space-y-10 md:space-y-0 md:space-x-6 justify-center items-center w-full">
                             <div className="flex flex-col space-y-2 w-full">
                                 <p className="w-full text-left text-xl text-stone-800">Klassenstufe</p>
-                                <select id="select-1" className="py-1 border border-zinc-500 rounded-md bg-white w-full text-lg text-stone-800 px-2 focus:outline-none text-center">
+                                <select value={year} onChange={e => setYear(parseInt(e.target.value))} id="select-1" className="py-1 border border-zinc-500 rounded-md bg-white w-full text-lg text-stone-800 px-2 focus:outline-none text-center">
                                     <option value="7" >7</option>
                                     <option value="8" >8</option>
                                     <option value="9" >9</option>
@@ -129,7 +152,7 @@ const Create = () => {
                             </div>
                             <div className="flex flex-col space-y-2 w-full">
                                 <p className="w-full text-left text-xl text-stone-800">Fach</p>
-                                <select className="py-1 border border-zinc-500 rounded-md bg-white w-full text-lg text-stone-800 px-2 focus:outline-none text-center">
+                                <select value={subject} onChange={e => setSubject(e.target.value)} className="py-1 border border-zinc-500 rounded-md bg-white w-full text-lg text-stone-800 px-2 focus:outline-none text-center">
                                     <option value="Informatik">Informatik</option>
                                     <option value="Medien und Kommunikation">Medien und Kommunikation</option>
                                     <option value="Englisch">Englisch :-)</option>
@@ -238,8 +261,8 @@ const Create = () => {
                     </div>
 
                     <div className="flex flex-row items-center justify-center space-x-4 mt-10">
-                        <button className="bg-green-500 text-slate-50 text-xl text-center p-2 rounded-md flex flex-row items-center justify-center font-semibold space-x-3"><BiSave className="h-6 w-6 mr-3" /> Kurs erstellen </button>
-                        <button className="bg-red-500 text-slate-50 text-xl text-center p-2 rounded-md flex flex-row items-center justify-center font-semibold space-x-3"><MdCancel className="h-6 w-6 mr-3" /> Abbrechen</button>
+                        <button onClick={save} className="bg-green-500 text-slate-50 text-xl text-center p-2 rounded-md flex flex-row items-center justify-center font-semibold space-x-3"><BiSave className="h-6 w-6 mr-3" /> Kurs erstellen </button>
+                        <button onClick={cancel} className="bg-red-500 text-slate-50 text-xl text-center p-2 rounded-md flex flex-row items-center justify-center font-semibold space-x-3"><MdCancel className="h-6 w-6 mr-3" /> Abbrechen</button>
                     </div>
 
                 </div>

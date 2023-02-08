@@ -1,10 +1,10 @@
 -- CreateTable
 CREATE TABLE "Student" (
     "id" TEXT NOT NULL PRIMARY KEY,
-    "namne" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
     "sirname" TEXT NOT NULL,
     "gender" INTEGER NOT NULL,
-    "dateOfBirth" DATETIME NOT NULL,
+    "dateOfBirth" INTEGER NOT NULL,
     "visuals" INTEGER NOT NULL
 );
 
@@ -14,7 +14,7 @@ CREATE TABLE "Course" (
     "title" TEXT NOT NULL,
     "subject" TEXT NOT NULL,
     "year" INTEGER NOT NULL,
-    "created" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "created" INTEGER NOT NULL,
     "quantityValue" INTEGER NOT NULL DEFAULT 50
 );
 
@@ -33,7 +33,7 @@ CREATE TABLE "Seatingplan" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "courseId" TEXT NOT NULL,
     "title" TEXT NOT NULL,
-    "created" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "created" INTEGER NOT NULL,
     CONSTRAINT "Seatingplan_courseId_fkey" FOREIGN KEY ("courseId") REFERENCES "Course" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
@@ -52,7 +52,7 @@ CREATE TABLE "Seat" (
 CREATE TABLE "Grouping" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "title" TEXT NOT NULL,
-    "created" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "created" INTEGER NOT NULL,
     "courseId" TEXT NOT NULL,
     CONSTRAINT "Grouping_courseId_fkey" FOREIGN KEY ("courseId") REFERENCES "Course" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
@@ -80,7 +80,7 @@ CREATE TABLE "Group_Member" (
 CREATE TABLE "Session" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "courseId" TEXT NOT NULL,
-    "date" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "date" INTEGER NOT NULL,
     "duration" INTEGER NOT NULL,
     "topic" TEXT NOT NULL,
     "description" TEXT NOT NULL,
