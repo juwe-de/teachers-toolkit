@@ -258,7 +258,7 @@ const Create: NextPage<props> = ({ existingStudents }) => {
                                                     // typed out sirname doesnt match this student
                                                     if(!student.name.toLowerCase().includes(name.toLowerCase())) return
                                                     // student has already been added to the course, cannot add again
-                                                    if(existingStudentsInCourse.includes(student)) 
+                                                    if(existingStudentsInCourse.includes(student)) return
                                                     
                                                     return (
                                                         <button onClick={() => {setExistingStudentsInCourse([...existingStudentsInCourse, student]); setAddingStudent(!addingStudent)}} className="w-full bg-white border-b border-zinc-500 p-1 last:border-0 flex flex-row items-center justify-between text-stone-800 text-sm hover:bg-slate-50 cursor-pointer">
