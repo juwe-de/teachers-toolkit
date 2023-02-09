@@ -20,7 +20,7 @@ const Home: NextPage<props> = ({ courses }) => {
     <div className='min-h-screen flex flex-col justify-between'>
       <Header />
       <main className='flex flex-col items-center justify-center py-2'>
-        <div className='flex max-w-4xl sm:w-full items-center justify-center text-center'>
+        <div className='flex flex-col max-w-4xl sm:w-full items-center justify-center text-center'>
           {courses.map(course => {
             return(
               <div className='flex flex-col text-center'>

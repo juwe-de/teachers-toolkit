@@ -1,6 +1,7 @@
 import Footer from "../../components/Footer"
 import Header from "../../components/Header"
 import StudentItem from "../../components/StudentItem"
+import ExistingStudentItem from "../../components/ExistingStudentItem"
 
 import { FormEvent, useState } from "react"
 import DatePicker from "react-datepicker"
@@ -12,8 +13,24 @@ import { MdOutlineInfo, MdCancel } from "react-icons/md"
 import { AiOutlineCheck } from "react-icons/ai"
 import { RxCross1 } from "react-icons/rx"
 import { BiSave } from "react-icons/bi" 
+import { GetServerSideProps, NextPage } from "next"
 
-const Create = () => {
+import prisma from "../../components/Client"
+
+type existingStudent = {
+    id: string,
+    name: string,
+    sirname: string,
+    dateOfBirth: string,
+    gender: number,
+    visuals: number,
+}
+
+type props = {
+    existingStudents: existingStudent[]
+}
+
+const Create: NextPage<props> = ({ existingStudents }) => {
 
     interface student {
         name: string, sirname: string, gender: number, dateOfBirth: number, visuals: number
@@ -40,6 +57,10 @@ const Create = () => {
     const [gender, setGender] = useState(0)
     const [visuals, setVisuals] = useState(0)
 
+    // existing students that have been added to the course by suggestion
+    // students that are created and students that already exist need to be handled in different ways to maintain the db structure
+    const [existingStudentsInCourse, setExistingStudentsInCourse] = useState<existingStudent[]>([])
+
     // update the sliders value
     // gets called every time the slider input changes
     const handleSliderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -56,6 +77,17 @@ const Create = () => {
         newStudents.splice(index, 1)
 
         setStundents([...newStudents])
+
+    }
+
+    const deleteExistingStudent = (student: existingStudent) => {
+
+        const index = existingStudentsInCourse.indexOf(student)
+
+        const newStudents = existingStudentsInCourse
+        newStudents.splice(index, 1)
+
+        setExistingStudentsInCourse([...newStudents])
 
     }
 
@@ -90,7 +122,7 @@ const Create = () => {
 
     const save = async () => {
         // creating a course without students is very unusual, so ask for confirmation
-        if(students.length == 0 && !confirm("Möchtest du wirklich einen Kurs ohne Schüler erstellen?")) return
+        if(students.length == 0 && existingStudentsInCourse.length == 0 && !confirm("Möchtest du wirklich einen Kurs ohne Schüler erstellen?")) return
 
         await fetch("/api/course/create", {
             body: JSON.stringify({
@@ -98,7 +130,8 @@ const Create = () => {
                 subject: subject,
                 year: year,
                 quantityValue: quantityValue,
-                students: students
+                students: students,
+                existingStudents: existingStudentsInCourse
             }),
             headers: {
                 "Content-Type": "application/json"
@@ -198,6 +231,12 @@ const Create = () => {
                                         <StudentItem deleteStudent={(student: student) => deleteStudent(student)} information={student} />
                                     )
                                 })}
+
+                                {existingStudentsInCourse.map((student) => {
+                                    return (
+                                        <ExistingStudentItem deleteStudent={(student: existingStudent) => deleteExistingStudent(student)} information={student} />
+                                    )
+                                })}
                             </div>
 
                             <button onClick={() => {setAddingStudent(!addingStudent)}} className={`w-full bg-slate-50 text-center text-lg border border-zinc-500 rounded-sm  ${addingStudent ? "hidden" : ""} `}>+</button>
@@ -209,12 +248,53 @@ const Create = () => {
 
                                     <div className="flex flex-col items-center justify-center w-full">
                                         <p className="text-stone-800 text-left w-full">Name</p>
-                                        <input value={name} onChange={(e) => {setName(e.target.value)}} name="name" className="w-full border border-zinc-500 focus:outline-none p-1 rounded-md" placeholder="John" required />
+
+                                        <div className="group w-full relative">
+                                            <input value={name} onChange={(e) => {setName(e.target.value)}} name="name" className="w-full border border-zinc-500 focus:outline-none p-1 rounded-md" placeholder="John" required />
+                                            
+                                            {/* suggest existing students by name */}
+                                            <div className={`w-full max-h-40 hidden flex-col items-center bg-white border border-zinc-500 rounded-md p-2 absolute z-20 -translate-y-full -top-2 overflow-y-scroll overflow-x-scroll ${name == "" ? "" : "group-focus-within:flex"}`}>
+                                	            {existingStudents.map(student => {
+                                                    // typed out sirname doesnt match this student
+                                                    if(!student.name.toLowerCase().includes(name.toLowerCase())) return
+                                                    // student has already been added to the course, cannot add again
+                                                    if(existingStudentsInCourse.includes(student)) 
+                                                    
+                                                    return (
+                                                        <button onClick={() => {setExistingStudentsInCourse([...existingStudentsInCourse, student]); setAddingStudent(!addingStudent)}} className="w-full bg-white border-b border-zinc-500 p-1 last:border-0 flex flex-row items-center justify-between text-stone-800 text-sm hover:bg-slate-50 cursor-pointer">
+                                                            <p>{student.sirname}, {student.name}</p>
+                                                        </button>
+                                                    )
+                                                })}
+                                            </div>
+                                       
+                                        </div>
                                     </div>
 
                                     <div className="flex flex-col items-center justify-center w-full">
                                         <p className="text-stone-800 text-left w-full">Nachname</p>
-                                        <input value={sirname} onChange={(e) => {setSirname(e.target.value)}} name="sirname" className="w-full border border-zinc-500 focus:outline-none p-1 rounded-md" placeholder="Doe" required />
+
+                                        <div className="group w-full relative">
+                                            <input value={sirname} onChange={(e) => {setSirname(e.target.value)}} name="sirname" className="w-full border border-zinc-500 focus:outline-none p-1 rounded-md" placeholder="Doe" required />
+
+                                            {/* suggest existing students by sirname */}
+                                            <div className={`w-full max-h-40 hidden flex-col items-center bg-white border border-zinc-500 rounded-md p-2 absolute z-20 -translate-y-full -top-2 overflow-y-scroll overflow-x-scroll ${sirname == "" ? "" : "group-focus-within:flex"}`}>
+                                	            {existingStudents.map(student => {
+                                                    // typed out sirname doesnt match this student
+                                                    if(!student.sirname.toLowerCase().includes(sirname.toLowerCase())) return
+                                                    // student has already been added to the course, cannot add again
+                                                    if(existingStudentsInCourse.includes(student)) return
+
+                                                    return (
+                                                        <button onClick={() => {setExistingStudentsInCourse([...existingStudentsInCourse, student]); setAddingStudent(!addingStudent)}} className="w-full bg-white border-b border-zinc-500 p-1 last:border-0 flex flex-row items-center justify-between text-stone-800 text-sm hover:bg-slate-50 cursor-pointer">
+                                                            <p>{student.sirname}, {student.name}</p>
+                                                            
+                                                        </button>
+                                                    )
+                                                })}
+                                            </div>
+                                        </div>
+
                                     </div>
                                 </div>
                                 
@@ -271,6 +351,14 @@ const Create = () => {
             <Footer />
         </div>
     )
+}
+
+export const getServerSideProps: GetServerSideProps = async () => {
+    const existingStudents = await prisma.student.findMany()
+
+    return {
+        props: {existingStudents}
+    }
 }
 
 export default Create;
