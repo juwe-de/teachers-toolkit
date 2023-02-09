@@ -8,10 +8,11 @@ import { BsGenderMale, BsGenderFemale } from "react-icons/bs"
 // Component to show a student in a listing of students, e.g. in the create course page
 type Props = {
     information: {
+        id: string,
         name: string,
         sirname: string,
         gender: number
-        dateOfBirth: number,
+        dateOfBirth: string,
         visuals: number,
     },
     deleteStudent: Function,
@@ -25,7 +26,7 @@ const sights = [
 
 const StudentItem: FunctionComponent<Props> = ({ information, deleteStudent }) => {
 
-    const dateOfBirth = new Date(information.dateOfBirth)
+    const dateOfBirth = new Date(parseInt(information.dateOfBirth))
     const day = dateOfBirth.getDate()
     const month = dateOfBirth.getMonth() + 1
     const year = dateOfBirth.getFullYear()

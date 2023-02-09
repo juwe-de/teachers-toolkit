@@ -2,7 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import prisma from "../../../components/Client";
 
 export default async function handler(request: NextApiRequest, response: NextApiResponse) {
-    const { title, subject, year, quantityValue, students } = request.body
+    const { title, subject, year, quantityValue, students, existingStudents } = request.body
 
     type student = {
         name: string,
@@ -12,8 +12,44 @@ export default async function handler(request: NextApiRequest, response: NextApi
         dateOfBirth: number,
     }
 
+    type exisitngStudent = {
+        id: string,
+        name: string,
+        sirname: string,
+        gender: number,
+        visuals: number,
+        dateOfBirth: string,
+    }
+
+    const queryCreateStudents = students.map((student: student) => {
+        return {
+            student: {
+                create: {
+                    name: student.name,
+                    sirname: student.sirname,
+                    visuals: student.visuals,
+                    gender: student.gender,
+                    dateOfBirth: student.dateOfBirth.toString(),
+                }
+            }
+        }
+    })
+
+    const queryAddStudents = existingStudents.map((existingStudent: exisitngStudent) => {
+        return {
+            student:{
+                connect: {
+                    id: existingStudent.id
+                }
+            }
+        }
+    })
+
+    const finalQuery = [...queryCreateStudents, ...queryAddStudents]
+
     try {
 
+        // create the course
         await prisma.course.create({
             data: {
                 title,
@@ -22,19 +58,7 @@ export default async function handler(request: NextApiRequest, response: NextApi
                 quantityValue,
                 created: Date.now().toString(),
                 course_participation: {
-                    create: students.map((student: student) => {
-                        return {
-                            student: {
-                                create: {
-                                    name: student.name,
-                                    sirname: student.sirname,
-                                    visuals: student.visuals,
-                                    gender: student.gender,
-                                    dateOfBirth: student.dateOfBirth.toString(),
-                                }
-                            }
-                        }
-                    })
+                    create: finalQuery
                 }
             }
         })
