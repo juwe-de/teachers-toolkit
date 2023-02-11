@@ -4,12 +4,13 @@ import Footer from "../../../components/Footer"
 import Header from "../../../components/Header"
 
 import prisma from "../../../components/Client"
-import { MdOutlineClass, MdSubject } from "react-icons/md"
+import { MdOutlineClass, MdSubject, MdEdit } from "react-icons/md"
 import { AiOutlineClockCircle } from "react-icons/ai"
 import StudentItem from "../../../components/StudentItem"
 import ExistingStudentItem from "../../../components/ExistingStudentItem"
 import { useEffect, useState } from "react"
 import { BsGenderMale, BsGenderFemale, BsFilterSquare } from "react-icons/bs"
+import { useRouter } from "next/router"
 
 type course = {
     id: string,
@@ -53,6 +54,8 @@ const Course: NextPage<props> = ({course, students, answers, annotations}) => {
 
     const [filterMenuOpen, setFilterMenuOpen] = useState<boolean>(false)
     const [filterMenuValue, setFilterMenuValue] = useState<number>(1)
+
+    const router = useRouter()
 
     const calculateStudentRatings = () => {
         const studentsWithRatings: {student: student, rating: number}[] = []
@@ -103,7 +106,12 @@ const Course: NextPage<props> = ({course, students, answers, annotations}) => {
             <main className="flex flex-col items-center justify-center">
                 <div className="max-w-lg md:max-w-2xl lg:max-w-4xl w-full flex flex-col items-center justify-center">
                     <div className="w-full text-4xl text-blue-400 border-b border-zinc-500 px-4 text-center md:text-left md:mx-4 py-2 flex flex-col items-left justify-center">
-                        <h1>{course.title}</h1>
+
+                        <div className="flex flex-row items-center justify-start space-x-3">
+                            <h1>{course.title}</h1>
+                            <button onClick={() => router.push(`/course/${course.id}/edit`)} className="w-8 h-8 bg-white border border-zinc-500 rounded-md flex items-center justify-center cursor-pointer"><MdEdit className="h-6 w-6 text-stone-800" /></button>
+                        </div>
+
                         <div className="flex flex-row items-center justify-start text-stone-800 text-sm space-x-2">
                             <div className="flex flex-row items-center justify-center space-x-1"><MdSubject className="w-4 h-4 mr-1" /> {course.subject}</div>
                             <div className="flex flex-row items-center justify-center space-x-1"><MdOutlineClass className="w-4 h-4 mr-1" /> Jahrgang {course.year}</div>
