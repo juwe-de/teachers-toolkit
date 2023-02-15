@@ -168,8 +168,9 @@ const Create: NextPage<props> = ({ existingStudents, course, studentsInCourse })
             <main className="flex flex-col items-center justify-center">
                 <div className="max-w-lg md:max-w-2xl lg:max-w-4xl w-full flex flex-col items-center justify-center">
                     {/* Heading */}
-                    <div className="w-full text-4xl text-blue-400 border-b border-zinc-500 px-4 text-center md:text-left md:mx-4 py-2">
-                        <h1>Erstelle einen Kurs</h1>
+                    <div className="w-full flex flex-row items-center justify-start space-x-2 text-4xl text-blue-400 border-b border-zinc-500 px-4 text-center md:text-left md:mx-4 py-2">
+                        <h1>Bearbeite</h1>
+                        <h1 className="underline">{course.title}</h1>
                     </div>
                     
                     {/* Basic form */}
