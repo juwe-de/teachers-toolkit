@@ -1,7 +1,7 @@
-import Footer from "../../components/Footer"
-import Header from "../../components/Header"
-import StudentItem from "../../components/StudentItem"
-import ExistingStudentItem from "../../components/ExistingStudentItem"
+import Footer from "../../../components/Footer"
+import Header from "../../../components/Header"
+import StudentItem from "../../../components/StudentItem"
+import ExistingStudentItem from "../../../components/ExistingStudentItem"
 
 import { FormEvent, useState } from "react"
 import DatePicker from "react-datepicker"
@@ -15,7 +15,7 @@ import { RxCross1 } from "react-icons/rx"
 import { BiSave } from "react-icons/bi" 
 import { GetServerSideProps, NextPage } from "next"
 
-import prisma from "../../components/Client"
+import prisma from "../../../components/Client"
 
 type existingStudent = {
     id: string,
