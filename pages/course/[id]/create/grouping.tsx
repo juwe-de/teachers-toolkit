@@ -231,7 +231,7 @@ const CreateGrouping: NextPage<props> = ({ students }) => {
             console.log("lul")
             return
         }
-        /*
+        
         await fetch("/api/grouping/create", {
             body: JSON.stringify({
                 courseId: router.query.id?.toString(),
@@ -245,7 +245,7 @@ const CreateGrouping: NextPage<props> = ({ students }) => {
         })
 
         router.push(`/course/${router.query.id}`)
-        */
+        
     }
 
     const cancel = () => {
