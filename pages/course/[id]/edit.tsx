@@ -134,6 +134,10 @@ const Create: NextPage<props> = ({ existingStudents, course, studentsInCourse })
     const save = async () => {
         // creating a course without students is very unusual, so ask for confirmation
         if(students.length == 0 && existingStudentsInCourse.length == 0 && !confirm("Möchtest du wirklich einen Kurs ohne Schüler erstellen?")) return
+        if(courseTitle == "") {
+            alert("Bitte gib einen Kursnamen ein!")
+            return
+        }
 
         await fetch(`/api/course/${course.id}/update`, {
             body: JSON.stringify({
@@ -179,7 +183,7 @@ const Create: NextPage<props> = ({ existingStudents, course, studentsInCourse })
                         {/* Title input */}
                         <div className="flex flex-col space-y-2 w-full">
                             <p className="w-full text-left text-xl text-stone-800">Kursname</p>
-                            <input value={courseTitle} onChange={e => setCourseTitle(e.target.value == "" ? "Unbenannter Kurs" : e.target.value)} className="py-1 border border-zinc-500 rounded-md bg-white w-full text-lg text-stone-800 px-2 focus:outline-none" placeholder="Unbenannter Kurs"/>
+                            <input value={courseTitle} onChange={e => setCourseTitle(e.target.value)} className="py-1 border border-zinc-500 rounded-md bg-white w-full text-lg text-stone-800 px-2 focus:outline-none" placeholder="Neuen Kursnamen eingeben..."/>
                         </div>
 
                         {/* year/subject select */}
@@ -270,7 +274,7 @@ const Create: NextPage<props> = ({ existingStudents, course, studentsInCourse })
                                                     // typed out sirname doesnt match this student
                                                     if(!student.name.toLowerCase().includes(name.toLowerCase())) return
                                                     // student has already been added to the course, cannot add again
-                                                    if(existingStudentsInCourse.includes(student)) return
+                                                    if(existingStudentsInCourse.some(existingStudent => existingStudent.id?.toString() == student.id?.toString())) return
                                                     
                                                     return (
                                                         <button onClick={() => {setExistingStudentsInCourse([...existingStudentsInCourse, student]); setAddingStudent(!addingStudent)}} className="w-full bg-white border-b border-zinc-500 p-1 last:border-0 flex flex-row items-center justify-between text-stone-800 text-sm hover:bg-slate-50 cursor-pointer">
@@ -295,7 +299,7 @@ const Create: NextPage<props> = ({ existingStudents, course, studentsInCourse })
                                                     // typed out sirname doesnt match this student
                                                     if(!student.sirname.toLowerCase().includes(sirname.toLowerCase())) return
                                                     // student has already been added to the course, cannot add again
-                                                    if(existingStudentsInCourse.includes(student)) return
+                                                    if(existingStudentsInCourse.some(existingStudent => existingStudent.id?.toString() == student.id?.toString())) return
 
                                                     return (
                                                         <button onClick={() => {setExistingStudentsInCourse([...existingStudentsInCourse, student]); setAddingStudent(!addingStudent)}} className="w-full bg-white border-b border-zinc-500 p-1 last:border-0 flex flex-row items-center justify-between text-stone-800 text-sm hover:bg-slate-50 cursor-pointer">
