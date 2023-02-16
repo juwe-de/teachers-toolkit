@@ -179,9 +179,7 @@ const CreateGrouping: NextPage<props> = ({ students }) => {
         const newGroups = groups
         const groupToRename = groups[groupIndex]
 
-        const titleToChangeTo = title == "" ? `Gruppe ${groupIndex + 1}` : title
-
-        groupToRename.title = titleToChangeTo
+        groupToRename.title = title
 
         newGroups[groupIndex] = groupToRename
 
@@ -228,6 +226,12 @@ const CreateGrouping: NextPage<props> = ({ students }) => {
             return
         }
 
+        if(!validateTitles()) {
+            alert("Bitte stelle sicher, dass alle Gruppen und die Gruppeneinteilungen einen Titel haben!")
+            console.log("lul")
+            return
+        }
+        /*
         await fetch("/api/grouping/create", {
             body: JSON.stringify({
                 courseId: router.query.id?.toString(),
@@ -241,13 +245,25 @@ const CreateGrouping: NextPage<props> = ({ students }) => {
         })
 
         router.push(`/course/${router.query.id}`)
-
+        */
     }
 
     const cancel = () => {
         if(!confirm("Willst du wirklich abbrechen? Alle Daten gehen verloren!")) return
 
         router.push(`/course/${router.query.id}`)
+    }
+
+    const validateTitles = () => {
+        // checks if titles groups are not ""
+        // That would cause problems in the ui for displaying the groups, so we don't want that
+        // grouping title itself changes to "Unbenannte Gruppeneinteilung", so this won't be a problem
+
+        for(let group of groups) {
+            if(group.title == "") return false
+        }
+
+        return true
     }
 
     return (
@@ -308,7 +324,7 @@ const CreateGrouping: NextPage<props> = ({ students }) => {
                             return (
                                 <div key={groupIndex} className="w-full bg-white flex flex-col items-center justify-center border border-zinc-500 rounded-md !mt-28 p-3"  onDragEnter={(e) => {groupDragOverItem.current = groupIndex}}>
 
-                                    <input onChange={(e) => handleGroupTitleChange(e.target.value, groupIndex)} className="text-center py-1 border border-zinc-500 rounded-md bg-white w-full text-lg text-stone-800 px-2 focus:outline-none" placeholder="Unbenannte Gruppe" value={group.title}></input>
+                                    <input onChange={(e) => handleGroupTitleChange(e.target.value, groupIndex)} className="text-center py-1 border border-zinc-500 rounded-md bg-white w-full text-lg text-stone-800 px-2 focus:outline-none" placeholder={`Gruppe ${groupIndex + 1}`} value={group.title}></input>
 
                                     <div className="flex flex-col space-y-2 items-center justify-center w-full px-5 mt-5">
 
