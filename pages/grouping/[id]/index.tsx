@@ -4,7 +4,7 @@ import Header from "../../../components/Header";
 
 import prisma from "../../../components/Client";
 import { useRouter } from "next/router";
-import { MdEdit, MdOutlineClass, MdSubject } from "react-icons/md";
+import { MdCancel, MdEdit, MdOutlineClass, MdSubject } from "react-icons/md";
 import { AiOutlineClockCircle } from "react-icons/ai";
 import { BsGenderFemale, BsGenderMale } from "react-icons/bs";
 import { TfiAlert } from "react-icons/tfi"
@@ -27,6 +27,7 @@ type group = {
 
 type grouping = {
     id: string,
+    courseId: string,
     title: string,
     created: string,
 }
@@ -42,6 +43,14 @@ const Grouping: NextPage<props> = ({ grouping, groups, studentsNotAssigned }) =>
     const router = useRouter()
 
     const created = new Date(parseInt(grouping.created))
+
+    const deleteGrouping = async () => {
+        if(!confirm("Möchtest du wirklich die Gruppeneinteilung löschen? DIES KANN NICHT RÜCKGÄNGIG GEMACHT WERDEN")) return
+
+        await fetch(`/api/grouping/${router.query.id}/delete`)
+
+        router.push(`/course/${grouping.courseId}`)
+    }
 
     return(
         <div className="min-h-screen flex flex-col justify-between space-y-10">
@@ -103,8 +112,9 @@ const Grouping: NextPage<props> = ({ grouping, groups, studentsNotAssigned }) =>
                         })}
 
                         {/* students that are not included in the grouping (got added to the course after grouping was created) */}
+                        {/* only show when there are unassigned students */}
 
-                        <div className="bg-white w-full flex flex-col items-center justify-center border border-zinc-500 rounded-md !mt-20 p-3">
+                        {studentsNotAssigned.length > 0 && (<div className="bg-white w-full flex flex-col items-center justify-center border border-zinc-500 rounded-md !mt-20 p-3">
 
                             <div className="flex flex-col items-center justify-center space-y-2 w-full border-b border-zinc-500 pb-1">
 
@@ -139,7 +149,9 @@ const Grouping: NextPage<props> = ({ grouping, groups, studentsNotAssigned }) =>
 
                             </div>
 
-                        </div>
+                        </div>)}
+
+                        <button onClick={() => deleteGrouping()} className="bg-red-500 text-slate-50 text-xl text-center p-2 rounded-md flex flex-row items-center justify-center font-semibold space-x-3"><MdCancel className="h-6 w-6 mr-3" /> Löschen</button>
 
                     </div>
                 </div>
@@ -179,9 +191,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
                 group_member: {
                     some: {
                         group: {
-                            grouping: {
-                                id: groupingId
-                            }
+                            id: groupInDatabase?.id?.toString()
                         }
                     }
                 }
