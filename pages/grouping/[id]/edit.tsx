@@ -420,6 +420,13 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
                         }
                     }
                 }
+            },
+            course_participation: {
+                some: {
+                    course: {
+                        id: course?.id?.toString()
+                    }
+                }
             }
         }
     })
