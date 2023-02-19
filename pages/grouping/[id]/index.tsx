@@ -208,6 +208,12 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         groups.push(group)
     }
 
+    const course = await prisma.course.findFirst({
+        where: {
+            id: grouping?.courseId?.toString()
+        }
+    })
+
     const studentsNotAssigned = await prisma.student.findMany({
         where: {
             group_member: {
@@ -216,6 +222,13 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
                         grouping: {
                             id: groupingId
                         }
+                    }
+                }
+            },
+            course_participation: {
+                some: {
+                    course: {
+                        id: course?.id?.toString()
                     }
                 }
             }
