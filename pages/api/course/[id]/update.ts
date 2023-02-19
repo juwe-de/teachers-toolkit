@@ -24,6 +24,47 @@ type student = {
     const { title, subject, year, quantityValue, students, existingStudents } = request.body
 
     try {
+
+        // We want to see if any exisitng students that were in the course from the beginning
+        const previouslyExistingStudents = await prisma.student.findMany({
+            where: {
+                course_participation: {
+                    some: {
+                        course: {
+                            id: courseId
+                        }
+                    }
+                }
+            }
+        })
+
+        // Now we can compare that to the updated existingStudents list and figure out if any students got removed
+        const removedStudents = previouslyExistingStudents.filter(
+            previouslyExistingStudent => !existingStudents.find((existingStudent: exisitngStudent) => existingStudent.id == previouslyExistingStudent.id )
+        )
+
+        // Now remove these students from any grouping or seatingplan in that course
+        const removeFromGroupings = await prisma.group_Member.deleteMany({
+            where: {
+                student: {
+                    id: {
+                        in: removedStudents.map(student => {
+                            return student.id
+                        })
+                    }
+                },
+                group: {
+                    grouping: {
+                        course: {
+                            id: courseId
+                        }
+                    }
+                }
+            }
+        })
+
+        // TODO remove from seatingplans
+
         const deleteParticipations = await prisma.course_Participation.deleteMany({
             where: {
                 course: {

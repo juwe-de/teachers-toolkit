@@ -128,7 +128,6 @@ const Create: NextPage<props> = ({ existingStudents, course, studentsInCourse })
         // hide the form
         setAddingStudent(!addingStudent)
 
-        console.log(students)
     }
 
     const save = async () => {
@@ -152,10 +151,7 @@ const Create: NextPage<props> = ({ existingStudents, course, studentsInCourse })
                 "Content-Type": "application/json"
             },
             method: "POST"
-        }).then(response => {
-            console.log(response.json)
         })
-
         router.push(`/course/${course.id}`)
     }
 
@@ -389,8 +385,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
             }
         }
     })
-
-    console.log(studentsInCourse)
 
     return {
         props: {existingStudents, course, studentsInCourse}
