@@ -24,6 +24,11 @@ type existingStudent = {
     dateOfBirth: string,
     gender: number,
     visuals: number,
+    courses: course[]
+}
+
+type course = {
+    title: string,
 }
 
 type props = {
@@ -253,7 +258,7 @@ const Create: NextPage<props> = ({ existingStudents }) => {
                                             <input value={name} onChange={(e) => {setName(e.target.value)}} name="name" className="w-full border border-zinc-500 focus:outline-none p-1 rounded-md" placeholder="John" required />
                                             
                                             {/* suggest existing students by name */}
-                                            <div className={`w-full max-h-40 hidden flex-col items-center bg-white border border-zinc-500 rounded-md p-2 absolute z-20 -translate-y-full -top-2 overflow-y-scroll overflow-x-scroll ${name == "" ? "" : "group-focus-within:flex"}`}>
+                                            <div className={`w-full max-h-40 hidden flex-col items-center justify-start bg-white border border-zinc-500 rounded-md p-2 absolute z-20 -translate-y-full -top-2 overflow-scroll ${name == "" ? "" : "group-focus-within:flex"}`}>
                                 	            {existingStudents.map(student => {
                                                     // typed out sirname doesnt match this student
                                                     if(!student.name.toLowerCase().includes(name.toLowerCase())) return
@@ -261,8 +266,15 @@ const Create: NextPage<props> = ({ existingStudents }) => {
                                                     if(existingStudentsInCourse.includes(student)) return
                                                     
                                                     return (
-                                                        <button onClick={() => {setExistingStudentsInCourse([...existingStudentsInCourse, student]); setAddingStudent(!addingStudent)}} className="w-full bg-white border-b border-zinc-500 p-1 last:border-0 flex flex-row items-center justify-between text-stone-800 text-sm hover:bg-slate-50 cursor-pointer">
-                                                            <p>{student.sirname}, {student.name}</p>
+                                                        <button onClick={() => {setExistingStudentsInCourse([...existingStudentsInCourse, student]); setAddingStudent(!addingStudent)}} className="w-full bg-white border-b border-zinc-500 p-1 last:border-0 flex flex-row items-center justify-start text-stone-800 text-sm hover:bg-slate-50 cursor-pointer">
+                                                            <p className="!w-20 mr-5">{student.sirname}, {student.name}</p>
+                                                            <div className="flex flex-row items-center justify-start space-x-2">
+                                                                {student.courses.map(course => {
+                                                                    return (
+                                                                        <p className="w-20 bg-orange-600 text-slate-50 p-1 rounded-md">{course.title}</p>
+                                                                    )
+                                                                })}
+                                                            </div>
                                                         </button>
                                                     )
                                                 })}
@@ -286,9 +298,15 @@ const Create: NextPage<props> = ({ existingStudents }) => {
                                                     if(existingStudentsInCourse.includes(student)) return
 
                                                     return (
-                                                        <button onClick={() => {setExistingStudentsInCourse([...existingStudentsInCourse, student]); setAddingStudent(!addingStudent)}} className="w-full bg-white border-b border-zinc-500 p-1 last:border-0 flex flex-row items-center justify-between text-stone-800 text-sm hover:bg-slate-50 cursor-pointer">
-                                                            <p>{student.sirname}, {student.name}</p>
-                                                            
+                                                        <button onClick={() => {setExistingStudentsInCourse([...existingStudentsInCourse, student]); setAddingStudent(!addingStudent)}} className="w-full bg-white border-b border-zinc-500 p-1 last:border-0 flex flex-row items-center justify-start text-stone-800 text-sm hover:bg-slate-50 cursor-pointer">
+                                                            <p className="!w-20 mr-5">{student.sirname}, {student.name}</p>
+                                                            <div className="flex flex-row items-center justify-start space-x-2">
+                                                                {student.courses.map(course => {
+                                                                    return (
+                                                                        <p className="w-20 bg-orange-600 text-slate-50 p-1 rounded-md">{course.title}</p>
+                                                                    )
+                                                                })}
+                                                            </div>
                                                         </button>
                                                     )
                                                 })}
@@ -354,8 +372,34 @@ const Create: NextPage<props> = ({ existingStudents }) => {
 }
 
 export const getServerSideProps: GetServerSideProps = async () => {
-    const existingStudents = await prisma.student.findMany()
+    const existingStudentsInDatabase = await prisma.student.findMany()
 
+    const existingStudents: existingStudent[] = []
+
+    // find all of the courses each existing student is in
+    for(let existingStudentInDatabase of existingStudentsInDatabase) {
+        const courses = await prisma.course.findMany({
+            where: {
+                course_participation: {
+                    some: {
+                        student: {
+                            id: existingStudentInDatabase.id?.toString()
+                        }
+                    }
+                }
+            }
+        })
+
+        existingStudents.push({
+            name: existingStudentInDatabase.name,
+            sirname: existingStudentInDatabase.sirname,
+            dateOfBirth: existingStudentInDatabase.dateOfBirth,
+            id: existingStudentInDatabase.id,
+            gender: existingStudentInDatabase.gender,
+            visuals: existingStudentInDatabase.visuals,
+            courses: courses
+        })
+    }
     return {
         props: {existingStudents}
     }
