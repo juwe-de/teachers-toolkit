@@ -221,12 +221,12 @@ const Create: NextPage<props> = ({ existingStudents, course, studentsInCourse })
                             <input onChange={handleSliderChange} className="rounded-lg overflow-hidden appearance-none bg-blue-700 h-3 w-full" type="range" min="1" max="100" step="1" value={quantityValue} />
                             <div className="flex flex-row items-center justify-between">
 
-                                <p className="text-md text-blue-500 w-10">Quantität</p>
+                                <p className="text-md text-blue-500 w-10">Qualität</p>
 
                                 {/* Button for setting the slider on 50% */}
                                 <button onClick={() => {setQuantityValue(50)}} className="bg-gradient-to-r from-blue-500 to-blue-700 rounded-lg px-2 text-slate-50">50/50</button>
 
-                                <p className="text-md text-blue-700 w-10">Qualität</p>
+                                <p className="text-md text-blue-700 w-10">Quantität</p>
 
                             </div>
 
