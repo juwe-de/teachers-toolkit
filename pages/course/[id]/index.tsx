@@ -47,15 +47,22 @@ type grouping = {
     created: string,
 }
 
+type seatingplan = {
+    id: string,
+    title: string,
+    created: string,
+}
+
 type props = {
     course: course,
     students: student[]
     answers: answer[]
     annotations: annotation[]
     groupings: grouping[]
+    seatingplans: seatingplan[]
 }
 
-const Course: NextPage<props> = ({course, students, answers, annotations, groupings}) => {
+const Course: NextPage<props> = ({course, students, answers, annotations, groupings, seatingplans}) => {
 
     const created = new Date(parseInt(course.created))
     const [studentData, setStudentData] = useState<{student: student, rating: number}[]>([])
@@ -177,7 +184,7 @@ const Course: NextPage<props> = ({course, students, answers, annotations, groupi
 
                         </div>
 
-                        <div className="w-full bg-white flex flex-col items-center justify-center border border-zinc-500 rounded-md !mt-10 p-3 relative">
+                        <div className="w-full bg-white flex flex-col items-center justify-center border border-zinc-500 rounded-md !mt-20 p-3 relative">
 
                             <div className="w-full flex flex-col items-center justify-center space-y-2 border-b border-zinc-500 pb-1 mx-4 text-stone-800">
                                 <h1 className="text-center text-2xl font-md">Gruppeneinteilungen</h1>
@@ -210,6 +217,42 @@ const Course: NextPage<props> = ({course, students, answers, annotations, groupi
                                 }
                                 {groupings.length == 0 && (<p>In diesem Kurs wurden noch keine Gruppeneinteilungen erstellt...</p>)}
                                 <Link href={`/course/${course.id}/create/grouping`} className={`w-full bg-slate-50 text-center text-lg border border-zinc-500 rounded-sm`}>+</Link>
+                            </div>
+                        </div>
+
+                        <div className="w-full bg-white flex flex-col items-center justify-center border border-zinc-500 rounded-md !mt-20 p-3 relative">
+
+                            <div className="w-full flex flex-col items-center justify-center space-y-2 border-b border-zinc-500 pb-1 mx-4 text-stone-800">
+                                <h1 className="text-center text-2xl font-md">Sitzpläne</h1>
+                            </div>
+
+                            <div className="flex flex-col space-y-2 items-center justify-center w-full px-5 mt-5">
+                                {/* List all of the seatingplans */}
+                                {
+                                    seatingplans.map(object => {
+
+                                        const createdTimeStamp = parseInt(object.created)
+                                        const createdDate = new Date(createdTimeStamp)
+                                        
+                                        return (
+                                            <Link href={`/seatingplan/${object.id}`} className="flex flex-row justify-between items-center w-full text-stone-800 text-lg border-b border-zinc-500 border-dashed last:border-0 py-2 cursor-pointer hover:bg-slate-50">
+                                                <div className="w-80 flex flex-row items-center justify-between">
+                                                    <p className="w-full">{object.title}</p>
+                                                </div>
+                                                <p className="flex flex-row items-center justify-end space-x-2">
+                                                    <AiOutlineClockCircle />
+                                                    <p className="flex flex-row items-left justify-center">
+                                                        <p className="ml-1">{createdDate.getDate() < 10 ? "0" : ""}{createdDate.getDate()}.</p>
+                                                        <p>{createdDate.getMonth() + 1 < 10 ? "0" : ""}{createdDate.getMonth() + 1}.</p>
+                                                        <p>{createdDate.getFullYear()}</p>
+                                                    </p>
+                                                </p>
+                                            </Link>
+                                        )
+                                    })
+                                }
+                                {seatingplans.length == 0 && (<p>In diesem Kurs wurden noch keine Sitzpläne erstellt...</p>)}
+                                <Link href={`/course/${course.id}/create/seatingplan`} className={`w-full bg-slate-50 text-center text-lg border border-zinc-500 rounded-sm`}>+</Link>
                             </div>
                         </div>
 
@@ -271,8 +314,16 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         }
     })
 
+    const seatingplans = await prisma.seatingplan.findMany({
+        where: {
+            course: {
+                id: id?.toString()
+            }
+        }
+    })
+
     return {
-        props: {course, students, answers, annotations, groupings}
+        props: {course, students, answers, annotations, groupings, seatingplans}
     }
 }
 
