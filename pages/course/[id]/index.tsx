@@ -11,6 +11,7 @@ import ExistingStudentItem from "../../../components/ExistingStudentItem"
 import { useEffect, useState } from "react"
 import { BsGenderMale, BsGenderFemale, BsFilterSquare } from "react-icons/bs"
 import { useRouter } from "next/router"
+import Link from "next/link"
 
 type course = {
     id: string,
@@ -40,14 +41,21 @@ type annotation = {
     type: number
 }
 
+type grouping = {
+    id: string,
+    title: string,
+    created: string,
+}
+
 type props = {
     course: course,
     students: student[]
     answers: answer[]
     annotations: annotation[]
+    groupings: grouping[]
 }
 
-const Course: NextPage<props> = ({course, students, answers, annotations}) => {
+const Course: NextPage<props> = ({course, students, answers, annotations, groupings}) => {
 
     const created = new Date(parseInt(course.created))
     const [studentData, setStudentData] = useState<{student: student, rating: number}[]>([])
@@ -165,7 +173,46 @@ const Course: NextPage<props> = ({course, students, answers, annotations}) => {
                                 }
                             </div>
 
+                            
+
                         </div>
+
+                        <div className="w-full bg-white flex flex-col items-center justify-center border border-zinc-500 rounded-md !mt-10 p-3 relative">
+
+                            <div className="w-full flex flex-col items-center justify-center space-y-2 border-b border-zinc-500 pb-1 mx-4 text-stone-800">
+                                <h1 className="text-center text-2xl font-md">Gruppeneinteilungen</h1>
+                            </div>
+
+                            <div className="flex flex-col space-y-2 items-center justify-center w-full px-5 mt-5">
+                                {/* List all of the groupings */}
+                                {
+                                    groupings.map(object => {
+
+                                        const createdTimeStamp = parseInt(object.created)
+                                        const createdDate = new Date(createdTimeStamp)
+                                        
+                                        return (
+                                            <Link href={`/grouping/${object.id}`} className="flex flex-row justify-between items-center w-full text-stone-800 text-lg border-b border-zinc-500 border-dashed last:border-0 py-2 cursor-pointer hover:bg-slate-50">
+                                                <div className="w-80 flex flex-row items-center justify-between">
+                                                    <p className="w-full">{object.title}</p>
+                                                </div>
+                                                <p className="flex flex-row items-center justify-end space-x-2">
+                                                    <AiOutlineClockCircle />
+                                                    <p className="flex flex-row items-left justify-center">
+                                                        <p className="ml-1">{createdDate.getDate() < 10 ? "0" : ""}{createdDate.getDate()}.</p>
+                                                        <p>{createdDate.getMonth() + 1 < 10 ? "0" : ""}{createdDate.getMonth() + 1}.</p>
+                                                        <p>{createdDate.getFullYear()}</p>
+                                                    </p>
+                                                </p>
+                                            </Link>
+                                        )
+                                    })
+                                }
+                                {groupings.length == 0 && (<p>In diesem Kurs wurden noch keine Gruppeneinteilungen erstellt...</p>)}
+                                <Link href={`/course/${course.id}/create/grouping`} className={`w-full bg-slate-50 text-center text-lg border border-zinc-500 rounded-sm`}>+</Link>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             </main>
@@ -216,8 +263,16 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         }
     })
 
+    const groupings = await prisma.grouping.findMany({
+        where: {
+            course: {
+                id: id?.toString()
+            }
+        }
+    })
+
     return {
-        props: {course, students, answers, annotations}
+        props: {course, students, answers, annotations, groupings}
     }
 }
 
