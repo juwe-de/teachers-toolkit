@@ -33,6 +33,12 @@
         scrollbar-width: none;  /* Firefox */
     }
 
+    /* styling for a checked input box (boys next to girls option for seatingplans */
+    /* Toggle A */
+    input:checked ~ .dot {
+        transform: translateX(100%);
+        background-color: #48bb78;
+    }
     
 }
 

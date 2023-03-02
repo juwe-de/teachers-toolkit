@@ -203,14 +203,14 @@ const Course: NextPage<props> = ({course, students, answers, annotations, groupi
                                                 <div className="w-80 flex flex-row items-center justify-between">
                                                     <p className="w-full">{object.title}</p>
                                                 </div>
-                                                <p className="flex flex-row items-center justify-end space-x-2">
+                                                <div className="flex flex-row items-center justify-end space-x-2">
                                                     <AiOutlineClockCircle />
-                                                    <p className="flex flex-row items-left justify-center">
+                                                    <div className="flex flex-row items-left justify-center">
                                                         <p className="ml-1">{createdDate.getDate() < 10 ? "0" : ""}{createdDate.getDate()}.</p>
                                                         <p>{createdDate.getMonth() + 1 < 10 ? "0" : ""}{createdDate.getMonth() + 1}.</p>
                                                         <p>{createdDate.getFullYear()}</p>
-                                                    </p>
-                                                </p>
+                                                    </div>
+                                                </div>
                                             </Link>
                                         )
                                     })
@@ -239,14 +239,14 @@ const Course: NextPage<props> = ({course, students, answers, annotations, groupi
                                                 <div className="w-80 flex flex-row items-center justify-between">
                                                     <p className="w-full">{object.title}</p>
                                                 </div>
-                                                <p className="flex flex-row items-center justify-end space-x-2">
+                                                <div className="flex flex-row items-center justify-end space-x-2">
                                                     <AiOutlineClockCircle />
-                                                    <p className="flex flex-row items-left justify-center">
+                                                    <div className="flex flex-row items-left justify-center">
                                                         <p className="ml-1">{createdDate.getDate() < 10 ? "0" : ""}{createdDate.getDate()}.</p>
                                                         <p>{createdDate.getMonth() + 1 < 10 ? "0" : ""}{createdDate.getMonth() + 1}.</p>
                                                         <p>{createdDate.getFullYear()}</p>
-                                                    </p>
-                                                </p>
+                                                    </div>
+                                                </div>
                                             </Link>
                                         )
                                     })
