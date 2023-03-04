@@ -39,6 +39,12 @@
         transform: translateX(100%);
         background-color: #48bb78;
     }
+
+    @media (min-width: 1800px) {
+        .seatingplan-scrollable {
+            justify-content: center;
+        }
+    }
     
 }
 

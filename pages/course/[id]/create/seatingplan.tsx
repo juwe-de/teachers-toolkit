@@ -5,10 +5,11 @@ import prisma from "../../../../components/Client";
 import { useRef, useState } from "react";
 import { BsFilterSquare, BsGenderFemale, BsGenderMale } from "react-icons/bs";
 import { AiOutlineEyeInvisible } from "react-icons/ai";
-import Seat from "../../../../components/seatingplan/Seat";
+import Seat from "../../../../components/seatingplan/DraggableSeat";
 import { BiSave } from "react-icons/bi";
 import { MdCancel } from "react-icons/md";
 import { useRouter } from "next/router";
+import DraggableSeat from "../../../../components/seatingplan/DraggableSeat"
 
 type student = {
     id: string,
@@ -406,7 +407,7 @@ const CreateSeatingplan: NextPage<props> = ({students}) => {
                                         // proper seats simple (place them by index)
                                         seatingplan.slice(0, 2).map(seat => {
                                             return (
-                                                <Seat 
+                                                <DraggableSeat  
                                                     seat={seat} 
                                                     onDragStart={(index: number) => dragItem.current = index}
                                                     onDragEnd={() => handleDropAssigned()} 
@@ -420,7 +421,7 @@ const CreateSeatingplan: NextPage<props> = ({students}) => {
                                     {
                                         seatingplan.slice(7, 9).map(seat => {
                                             return (
-                                                <Seat 
+                                                <DraggableSeat 
                                                     seat={seat} 
                                                     onDragStart={(index: number) => dragItem.current = index}
                                                     onDragEnd={() => handleDropAssigned()} 
@@ -434,7 +435,7 @@ const CreateSeatingplan: NextPage<props> = ({students}) => {
                                     {
                                         seatingplan.slice(14, 16).map(seat => {
                                             return (
-                                                <Seat 
+                                                <DraggableSeat 
                                                     seat={seat} 
                                                     onDragStart={(index: number) => dragItem.current = index}
                                                     onDragEnd={() => handleDropAssigned()} 
@@ -457,7 +458,7 @@ const CreateSeatingplan: NextPage<props> = ({students}) => {
                                     // proper seats simple (place them by index)
                                     seatingplan.slice(2, 7).map(seat => {
                                         return (
-                                            <Seat 
+                                            <DraggableSeat 
                                                 seat={seat} 
                                                 onDragStart={(index: number) => dragItem.current = index}
                                                 onDragEnd={() => handleDropAssigned()} 
@@ -471,7 +472,7 @@ const CreateSeatingplan: NextPage<props> = ({students}) => {
                                 {
                                     seatingplan.slice(9, 14).map(seat => {
                                         return (
-                                            <Seat 
+                                            <DraggableSeat 
                                                 seat={seat} 
                                                 onDragStart={(index: number) => dragItem.current = index}
                                                 onDragEnd={() => handleDropAssigned()} 
@@ -485,13 +486,13 @@ const CreateSeatingplan: NextPage<props> = ({students}) => {
                                 {
                                     seatingplan.slice(16).map(seat => {
                                         return (
-                                            <Seat 
+                                            <DraggableSeat 
                                                 seat={seat} 
                                                 onDragStart={(index: number) => dragItem.current = index}
                                                 onDragEnd={() => handleDropAssigned()} 
                                                 onDragEnter={(index: number) => dragOverItem.current = index}
                                                 width={150}
-                                                height={75} 
+                                                height={75}
                                             />
                                         )
                                     })
