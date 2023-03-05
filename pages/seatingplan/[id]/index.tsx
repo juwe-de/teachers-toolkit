@@ -30,11 +30,12 @@ type seatingplan = {
 }
 
 type props = {
-    seats: seat[]
-    seatingplan: seatingplan
+    seats: seat[],
+    seatingplan: seatingplan,
+    studentsNotAssigned: student[]
 }
 
-const Seatingplan: NextPage<props> = ({seats, seatingplan}) => {
+const Seatingplan: NextPage<props> = ({seats, seatingplan, studentsNotAssigned}) => {
 
     const router = useRouter()
     const created = new Date(parseInt(seatingplan.created))
@@ -212,8 +213,27 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         seats.push(seat)
     }
 
+    const studentsNotAssigned = await prisma.student.findMany({
+        where: {
+            course_participation: {
+                some: {
+                    course: {
+                        id: seatingplan?.courseId.toString()
+                    }
+                }
+            },
+            seats: {
+                none: {
+                    seatingplan: {
+                        id: id
+                    }
+                }
+            }
+        }
+    })
+
     return {
-        props: {seats, seatingplan}
+        props: {seats, seatingplan, studentsNotAssigned}
     }
 }
 

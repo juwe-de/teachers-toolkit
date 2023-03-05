@@ -1,15 +1,15 @@
 import { GetServerSideProps, NextPage } from "next";
-import Footer from "../../../../components/Footer";
-import Header from "../../../../components/Header";
-import prisma from "../../../../components/Client";
+import Footer from "../../../components/Footer";
+import Header from "../../../components/Header";
+import prisma from "../../../components/Client";
 import { useRef, useState } from "react";
 import { BsFilterSquare, BsGenderFemale, BsGenderMale } from "react-icons/bs";
 import { AiOutlineEyeInvisible } from "react-icons/ai";
-import Seat from "../../../../components/seatingplan/DraggableSeat";
+import Seat from "../../../components/seatingplan/DraggableSeat";
 import { BiSave } from "react-icons/bi";
 import { MdCancel } from "react-icons/md";
 import { useRouter } from "next/router";
-import DraggableSeat from "../../../../components/seatingplan/DraggableSeat"
+import DraggableSeat from "../../../components/seatingplan/DraggableSeat"
 
 type student = {
     id: string,
@@ -21,7 +21,9 @@ type student = {
 }
 
 type props = {
-    students: student[]
+    students: student[],
+    seats: seat[],
+    prevTitle: string,
 }
 
 type seat = {
@@ -29,27 +31,12 @@ type seat = {
     index: number,
 }
 
-const CreateSeatingplan: NextPage<props> = ({students}) => {
+const EditSeatingplan: NextPage<props> = ({students, seats, prevTitle}) => {
 
     const [studentsNotAssigned, setStudentsNotAssigned] = useState<student[]>(students)
-    const [title, setTitle] = useState<string>("Unbenannter Sitzplan")
+    const [title, setTitle] = useState<string>(prevTitle)
 
-    const emptySeatingplan: seat[] = []
-    for(let i = 0; i < 30; i++) {
-        emptySeatingplan.push({
-            student: {
-                id: "",
-                name: "",
-                sirname: "",
-                dateOfBirth: "",
-                gender: -1,
-                visuals: -1
-            },
-            index: i
-        })
-    }
-
-    const [seatingplan, setSeatingplan] = useState<seat[]>(emptySeatingplan)
+    const [seatingplan, setSeatingplan] = useState<seat[]>(seats)
     const [boysNextToGirls, setBoysNextToGirls] = useState<boolean>(false)
 
     const sights = [
@@ -78,6 +65,7 @@ const CreateSeatingplan: NextPage<props> = ({students}) => {
 
     }
 
+    // This whole system may need an overhaul, but it works for now
     const placeBoysNextToGirls = () => {
 
         const maleStudents = studentsNotAssigned.filter(student => student.gender == 0)
@@ -134,7 +122,7 @@ const CreateSeatingplan: NextPage<props> = ({students}) => {
 
         for(let i = 1; i < newSeatingplan.length; i += 2) {
             // farsighted students should sit in the back and so on and so forth
-            let studentToBeSeated
+            let studentToBeSeated = undefined
             if (farSightedStudents.length > 0) {
 
                 studentToBeSeated = farSightedStudents.splice(Math.floor(Math.random()*farSightedStudents.length), 1)
@@ -299,11 +287,16 @@ const CreateSeatingplan: NextPage<props> = ({students}) => {
     const save = async () => {
 
         if(studentsNotAssigned.length > 0) {
-            alert("Bitte platziere alle Schüler, bevor du den Sitzplan erstellst.")
+            alert("Bitte platziere alle Schüler, bevor du den Sitzplan speicherst.")
             return
         }
 
-        await fetch("/api/seatingplan/create", {
+        if(title == "") {
+            alert("Bitte gib einen Titel ein, bevor du den Sitzplan speicherst")
+            return
+        }
+
+        await fetch(`/api/seatingplan/${router.query.id}/edit`, {
             body: JSON.stringify({
                 courseId: router.query.id?.toString(),
                 seatingplan: seatingplan,
@@ -315,7 +308,7 @@ const CreateSeatingplan: NextPage<props> = ({students}) => {
             method: "POST"
         })
 
-        router.push(`/course/${router.query.id}`)
+        router.push(`/seatingplan/${router.query.id}`)
 
     }
 
@@ -344,7 +337,7 @@ const CreateSeatingplan: NextPage<props> = ({students}) => {
                     <div className="w-full max-w-2xl flex flex-col items-center justify-center mt-10 space-y-10 px-4">
                         <div className="flex flex-col space-y-2 w-full">
                             <p className="w-full text-left text-xl text-stone-800">Name</p>
-                            <input onChange={e => setTitle(e.target.value == "" ? "Unbenannter Sitzplan" : e.target.value)} className="py-1 border border-zinc-500 rounded-md bg-white w-full text-lg text-stone-800 px-2 focus:outline-none" placeholder="Unbenannter Sitzplan"/>
+                            <input value={title} onChange={e => setTitle(e.target.value)} className="py-1 border border-zinc-500 rounded-md bg-white w-full text-lg text-stone-800 px-2 focus:outline-none" placeholder="Neuen Titel eingeben..."/>
                         </div>
 
 
@@ -511,7 +504,7 @@ const CreateSeatingplan: NextPage<props> = ({students}) => {
                         </div>
 
                         <div className="flex flex-row items-center justify-center space-x-4 mt-10">
-                            <button onClick={() => save()} className="bg-green-500 text-slate-50 text-xl text-center p-2 rounded-md flex flex-row items-center justify-center font-semibold space-x-3"><BiSave className="h-6 w-6 mr-3" /> Erstellen </button>
+                            <button onClick={() => save()} className="bg-green-500 text-slate-50 text-xl text-center p-2 rounded-md flex flex-row items-center justify-center font-semibold space-x-3"><BiSave className="h-6 w-6 mr-3" /> Speichern </button>
                             <button onClick={() => cancel()} className="bg-red-500 text-slate-50 text-xl text-center p-2 rounded-md flex flex-row items-center justify-center font-semibold space-x-3"><MdCancel className="h-6 w-6 mr-3" /> Abbrechen</button>
                         </div>                    
 
@@ -530,7 +523,15 @@ const CreateSeatingplan: NextPage<props> = ({students}) => {
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
 
-    const courseId = context.query.id?.toString()
+    const seatingplanId = context.query.id?.toString()
+
+    const seatingplan = await prisma.seatingplan.findFirst({
+        where: {
+            id: seatingplanId
+        }
+    })
+
+    const courseId = seatingplan?.courseId.toString()
 
     const students = await prisma.student.findMany({
         where: {
@@ -540,13 +541,57 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
                         id: courseId
                     }
                 }
+            },
+            seats: {
+                none: {
+                    seatingplan: {
+                        id: seatingplanId
+                    }
+                }
             }
         }
     })
 
+    const seatsInDatabase = await prisma.seat.findMany({
+        where: {
+            seatingplan: {
+                id: seatingplanId,
+            }
+        }
+    })
+
+    let seats: seat[] = []
+
+    for(let i = 0; i < 30; i++) {
+        let seat: any = seatsInDatabase.find(seat => seat.index == i)
+        if(seat == undefined) {
+            seat = {
+                index: i,
+                student: {
+                    id: "",
+                    name: "",
+                    sirname: "",
+                    dateOfBirth: "",
+                    gender: -1,
+                    visuals: -1
+                }
+            }
+        } else {
+            seat = {
+                index: i,
+                student: await prisma.student.findFirst({
+                    where: {
+                        id: seat.studentId?.toString()
+                    }
+                })
+            }
+        }
+        seats.push(seat)
+    }
+
     return {
-        props: {students}
+        props: {students, seats, prevTitle: seatingplan?.title}
     }
 } 
 
-export default CreateSeatingplan
+export default EditSeatingplan
