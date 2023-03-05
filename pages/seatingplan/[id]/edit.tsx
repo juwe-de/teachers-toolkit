@@ -316,7 +316,7 @@ const EditSeatingplan: NextPage<props> = ({students, seats, prevTitle}) => {
 
         if(!confirm("Möchtest du wirklich abbrechen? Alle Daten gehen verloren!")) return
 
-        router.push(`/course/${router.query.id}`)
+        router.push(`/seatingplan/${router.query.id}`)
 
     }
 

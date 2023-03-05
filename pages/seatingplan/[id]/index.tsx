@@ -7,6 +7,9 @@ import Footer from "../../../components/Footer";
 import Header from "../../../components/Header";
 import prisma from "../../../components/Client";
 import Seat from "../../../components/seatingplan/Seat";
+import { TfiAlert } from "react-icons/tfi";
+import Link from "next/link";
+import { BsGenderFemale, BsGenderMale } from "react-icons/bs";
 
 type student = {
     id: string,
@@ -158,6 +161,48 @@ const Seatingplan: NextPage<props> = ({seats, seatingplan, studentsNotAssigned})
 
                     </div>
                 </div>
+
+                {/* students that are not included in the seatingplan (got added to the course after seatingplan was created) */}
+                {/* only show when there are unassigned students */}
+                <div className="w-full flex items-center justify-center">
+                    {studentsNotAssigned.length > 0 && (<div className="bg-white w-full max-w-2xl flex flex-col items-center justify-center border border-zinc-500 rounded-md !mt-20 p-3">
+
+                        <div className="flex flex-col items-center justify-center space-y-2 w-full border-b border-zinc-500 pb-1">
+
+                            <h1 className="w-full text-center text-2xl font-md flex flex-row items-center justify-center space-x-2 text-red-500">
+                                <TfiAlert />
+                                <p>Nicht zugewiesen</p>
+                            </h1>
+
+                            <Link href={`/seatingplan/${router.query.id}/edit`}>
+                                <div className="rounded-md border border-zinc-500 p-1 bg-blue-400 text-white">
+                                    Beheben
+                                </div>
+                            </Link>
+
+                        </div>
+
+                        <div className="flex flex-col space-y-2 items-center justify-center w-full px-5 mt-5">
+
+                            {
+                                studentsNotAssigned.map((student: student, studentIndex) => {
+                                    return (
+                                        <div
+                                            key={studentIndex}
+                                            className="flex flex-row justify-between items-center w-full border-b border-zinc-500 border-dashed last:border-0 hover:bg-slate-50"
+                                        >
+                                            <div className="w-full p-1">{student.sirname}, {student.name}</div>
+                                            {student.gender == 0 ? (<BsGenderMale />) : (<BsGenderFemale />)}
+                                        </div>
+                                    )
+                                })
+                            }
+
+                        </div>
+
+                    </div>)}
+                </div>
+
             </main>
 
             <Footer />
