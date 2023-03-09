@@ -1,7 +1,7 @@
 import Footer from "../../../components/Footer"
 import Header from "../../../components/Header"
-import StudentItem from "../../../components/StudentItem"
-import ExistingStudentItem from "../../../components/ExistingStudentItem"
+import StudentItem from "../../../components/course/StudentItem"
+import ExistingStudentItem from "../../../components/course/ExistingStudentItem"
 
 import { FormEvent, useState } from "react"
 import DatePicker from "react-datepicker"

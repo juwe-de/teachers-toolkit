@@ -6,12 +6,13 @@ import Header from "../../../components/Header"
 import prisma from "../../../components/Client"
 import { MdOutlineClass, MdSubject, MdEdit } from "react-icons/md"
 import { AiOutlineClockCircle } from "react-icons/ai"
-import StudentItem from "../../../components/StudentItem"
-import ExistingStudentItem from "../../../components/ExistingStudentItem"
+import StudentItem from "../../../components/course/StudentItem"
+import ExistingStudentItem from "../../../components/course/ExistingStudentItem"
 import { useEffect, useState } from "react"
 import { BsGenderMale, BsGenderFemale, BsFilterSquare } from "react-icons/bs"
 import { useRouter } from "next/router"
 import Link from "next/link"
+import { create } from "domain"
 
 type course = {
     id: string,
@@ -53,16 +54,24 @@ type seatingplan = {
     created: string,
 }
 
+type session = {
+    id: string,
+    topic: string,
+    date: string,
+    duration: number
+}
+
 type props = {
     course: course,
     students: student[]
     answers: answer[]
     annotations: annotation[]
     groupings: grouping[]
-    seatingplans: seatingplan[]
+    seatingplans: seatingplan[],
+    sessions: session[]
 }
 
-const Course: NextPage<props> = ({course, students, answers, annotations, groupings, seatingplans}) => {
+const Course: NextPage<props> = ({course, students, answers, annotations, groupings, seatingplans, sessions}) => {
 
     const created = new Date(parseInt(course.created))
     const [studentData, setStudentData] = useState<{student: student, rating: number}[]>([])
@@ -256,6 +265,47 @@ const Course: NextPage<props> = ({course, students, answers, annotations, groupi
                             </div>
                         </div>
 
+                        <div className="w-full bg-white flex flex-col items-center justify-center border border-zinc-500 rounded-md !mt-20 p-3 relative">
+
+                            <div className="w-full flex flex-col items-center justify-center space-y-2 border-b border-zinc-500 pb-1 mx-4 text-stone-800">
+                                <h1 className="text-center text-2xl font-md">Kürzliche Sessions</h1>
+                                <Link href="/" className="text-blue-500 underline">Alle anzeigen</Link>
+                            </div>
+
+                            <div className="flex flex-col space-y-2 items-center justify-center w-full px-5 mt-5">
+                                {/* List of 5 recent sessions */}
+                                {
+                                    sessions.map(object => {
+
+                                        const createdTimeStamp = parseInt(object.date)
+                                        const createdDate = new Date(createdTimeStamp)
+
+                                        // only show sessions that happened within the pase week
+                                        if(new Date().getTime() - createdDate.getTime() > 7 * 24 * 60 * 60 * 1000) return (<></>)
+                                        
+                                        return (
+                                            <Link href={`/session/${object.id}`} className="flex flex-row justify-between items-center w-full text-stone-800 text-lg border-b border-zinc-500 border-dashed last:border-0 py-2 cursor-pointer hover:bg-slate-50">
+                                                <div className="w-80 flex flex-row items-center justify-between">
+                                                    <p className="w-full">{object.topic}</p>
+                                                </div>
+                                                <div className="flex flex-row items-center justify-end space-x-2">
+                                                    <AiOutlineClockCircle />
+                                                    <div className="flex flex-row items-left justify-center">
+                                                        <p className="ml-1">{createdDate.getDate() < 10 ? "0" : ""}{createdDate.getDate()}.</p>
+                                                        <p>{createdDate.getMonth() + 1 < 10 ? "0" : ""}{createdDate.getMonth() + 1}.</p>
+                                                        <p>{createdDate.getFullYear()}</p>
+                                                        <p>, {object.duration} Minuten</p>
+                                                    </div>
+                                                </div>
+                                            </Link>
+                                        )
+                                    })
+                                }
+                                {seatingplans.length == 0 && (<p>In diesem Kurs wurden noch keine Sessions gehalten...</p>)}
+                                <Link href={`/course/${course.id}/create/seatingplan`} className={`w-full bg-slate-50 text-center text-lg border border-zinc-500 rounded-sm`}>+</Link>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             </main>
@@ -322,8 +372,18 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         }
     })
 
+    const sessions = await prisma.session.findMany({
+        where: {
+            course: {
+                id: id?.toString()
+            }
+        }
+    })
+
+    sessions.sort((a, b) => new Date(parseInt(b.date)).getTime() - new Date(parseInt(a.date)).getTime())
+
     return {
-        props: {course, students, answers, annotations, groupings, seatingplans}
+        props: {course, students, answers, annotations, groupings, seatingplans, sessions}
     }
 }
 

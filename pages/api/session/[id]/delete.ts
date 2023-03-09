@@ -3,39 +3,37 @@ import prisma from "../../../../components/Client";
 
 export default async function handler(request: NextApiRequest, response: NextApiResponse) {
 
-    const groupingId = request.query.id?.toString()
+    const sessionId = request.query.id?.toString()
 
     try {
 
-        const deleteGroupMembers = await prisma.group_Member.deleteMany({
+        const deleteAnnotations = await prisma.annotation.deleteMany({
             where: {
-                group: {
-                    grouping: {
-                        id: groupingId
-                    }
-                }
-            }
-        })
-    
-        const deleteGroups = await prisma.group.deleteMany({
-            where: {
-                grouping: {
-                    id: groupingId
+                session: {
+                    id: sessionId
                 }
             }
         })
 
-        const deleteGrouping = await prisma.grouping.delete({
+        const deleteAnswers = await prisma.answer.deleteMany({
             where: {
-                id: groupingId
+                session: {
+                    id: sessionId
+                }
+            }
+        })
+
+        const deleteSession = await prisma.session.delete({
+            where: {
+                id: sessionId
             }
         })
 
         response.status(200).json({message: "deleted"})
-
+        
     } catch(error) {
         console.log(error)
         response.status(400).json({message: error})
     }
-    
+
 }
