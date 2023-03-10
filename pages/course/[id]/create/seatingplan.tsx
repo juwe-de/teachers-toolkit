@@ -97,7 +97,7 @@ const CreateSeatingplan: NextPage<props> = ({students}) => {
         let farSightedStudents = maleStudents.filter(student => student.visuals == 2)
         let nonImpairedStudents = maleStudents.filter(student => student.visuals == 0)
 
-        for(let i = 0; i < newSeatingplan.length; i += 2) {
+        for(let i = newSeatingplan.length-1; i >= 0; i -= 2) {
             // farsighted students should sit in the back and so on and so forth
             let studentToBeSeated
             if (farSightedStudents.length > 0) {
@@ -132,9 +132,9 @@ const CreateSeatingplan: NextPage<props> = ({students}) => {
         farSightedStudents = femaleStudents.filter(student => student.visuals == 2)
         nonImpairedStudents = femaleStudents.filter(student => student.visuals == 0)
 
-        for(let i = 1; i < newSeatingplan.length; i += 2) {
+        for(let i = newSeatingplan.length-2; i >= 1; i -= 2) {
             // farsighted students should sit in the back and so on and so forth
-            let studentToBeSeated
+            let studentToBeSeated = undefined
             if (farSightedStudents.length > 0) {
 
                 studentToBeSeated = farSightedStudents.splice(Math.floor(Math.random()*farSightedStudents.length), 1)
@@ -173,7 +173,7 @@ const CreateSeatingplan: NextPage<props> = ({students}) => {
 
         const newSeatingplan = seatingplan
 
-        for(let i = 0; i < newSeatingplan.length; i ++) {
+        for(let i = newSeatingplan.length-1; i >= 0; i --) {
             // farsighted students should sit in the back and so on and so forth
             let studentToBeSeated
             if (farSightedStudents.length > 0) {
