@@ -269,7 +269,7 @@ const Course: NextPage<props> = ({course, students, answers, annotations, groupi
 
                             <div className="w-full flex flex-col items-center justify-center space-y-2 border-b border-zinc-500 pb-1 mx-4 text-stone-800">
                                 <h1 className="text-center text-2xl font-md">Kürzliche Sessions</h1>
-                                <Link href="/" className="text-blue-500 underline">Alle anzeigen</Link>
+                                <Link href={`/course/${router.query.id}/sessions`} className="text-blue-500 underline">Alle anzeigen</Link>
                             </div>
 
                             <div className="flex flex-col space-y-2 items-center justify-center w-full px-5 mt-5">
@@ -288,21 +288,32 @@ const Course: NextPage<props> = ({course, students, answers, annotations, groupi
                                                 <div className="w-80 flex flex-row items-center justify-between">
                                                     <p className="w-full">{object.topic}</p>
                                                 </div>
-                                                <div className="flex flex-row items-center justify-end space-x-2">
+
+                                                {object.duration == 0 && (
+                                                    <p className="py-1 px-2 text-green-500 border border-green-500 rounded-full text-lg font-semibold">
+                                                        Session im Gange
+                                                    </p>
+                                                )}
+
+                                                {object.duration > 0 && (<div className="flex flex-row items-center justify-end space-x-1">
                                                     <AiOutlineClockCircle />
                                                     <div className="flex flex-row items-left justify-center">
                                                         <p className="ml-1">{createdDate.getDate() < 10 ? "0" : ""}{createdDate.getDate()}.</p>
                                                         <p>{createdDate.getMonth() + 1 < 10 ? "0" : ""}{createdDate.getMonth() + 1}.</p>
                                                         <p>{createdDate.getFullYear()}</p>
-                                                        <p>, {object.duration} Minuten</p>
+                                                        <p>, {object.duration} {object.duration > 1 ? "Minuten" : "Minute"}</p>
                                                     </div>
-                                                </div>
+                                                </div>)}
                                             </Link>
                                         )
                                     })
                                 }
-                                {seatingplans.length == 0 && (<p>In diesem Kurs wurden noch keine Sessions gehalten...</p>)}
-                                <Link href={`/course/${course.id}/create/seatingplan`} className={`w-full bg-slate-50 text-center text-lg border border-zinc-500 rounded-sm`}>+</Link>
+                                {sessions.length == 0 && (<p>In diesem Kurs wurden noch keine Sessions gehalten...</p>)}
+                                {
+                                    sessions.filter(session => session.duration == 0).length == 0 && (
+                                        <Link href={`/course/${course.id}/create/seatingplan`} className={`w-full bg-slate-50 text-center text-lg border border-zinc-500 rounded-sm`}>+</Link>
+                                    )
+                                }
                             </div>
                         </div>
 

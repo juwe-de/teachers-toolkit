@@ -9,7 +9,7 @@ import AnswerModal from "../../../components/session/AnswerModal";
 import SingletonRouter, { Router, useRouter } from "next/router";
 import EndSessionModal from "../../../components/session/EndSessionModal";
 import { AiOutlineClockCircle } from "react-icons/ai";
-import { MdOutlineClass, MdSubject } from "react-icons/md";
+import { MdCancel, MdOutlineClass, MdSubject } from "react-icons/md";
 import { BsFillCalendarDateFill } from "react-icons/bs";
 import { BsGenderFemale, BsGenderMale, BsFillHandThumbsUpFill, BsFillHandThumbsDownFill } from "react-icons/bs";
 import { HiHandRaised } from "react-icons/hi2"
@@ -65,7 +65,25 @@ type props = {
 
 const Session: NextPage<props> = ({session, seats, course, students, answers, annotations}) => {
 
+    // list of students with ratings, sorted by ratings
+    // only relevant for completed sessions
     const [studentData, setStudentData] = useState<{student: student, rating: number}[]>([])
+
+    const [showAnnotationModal, setShowAnnotationModal] = useState<boolean>(false)
+    const [showAnswerModal, setShowAnswerModal] = useState<boolean>(false)
+    const [showEndSessionModal, setShowEndSessionModal] = useState<boolean>(false)
+    const [annotationType, setAnnotationType] = useState<number>(0)
+    const [modalStudentId, setModalStudentId] = useState<string>("")
+
+    const router = useRouter()
+
+    const date = new Date(parseInt(session.date))
+
+    const leaderboardColors = [
+        "text-amber-400",
+        "text-slate-400",
+        "text-amber-700"
+    ]
 
     const calculateStudentRatings = () => {
         const studentsWithRatings: {student: student, rating: number}[] = []
@@ -105,16 +123,6 @@ const Session: NextPage<props> = ({session, seats, course, students, answers, an
         calculateStudentRatings()
     }, [])
 
-    const [showAnnotationModal, setShowAnnotationModal] = useState<boolean>(false)
-    const [showAnswerModal, setShowAnswerModal] = useState<boolean>(false)
-    const [showEndSessionModal, setShowEndSessionModal] = useState<boolean>(false)
-    const [annotationType, setAnnotationType] = useState<number>(0)
-    
-    const [modalStudentId, setModalStudentId] = useState<string>("")
-
-    // list of students with ratings, sorted by ratings
-    // only relevant for completed sessions
-
     const openAnnotationModal = (studentId: string, type: number) => {
         setModalStudentId(studentId)
         setAnnotationType(type)
@@ -126,7 +134,8 @@ const Session: NextPage<props> = ({session, seats, course, students, answers, an
         setShowAnswerModal(true)
     }
 
-    const router = useRouter()
+    // saving answers and annotations directly to the database is benefitial as you get live updates when you visit the course or landing page
+    // during the session
 
     const saveAnnotation = async (description: string, type: number) => {
         await fetch(`/api/session/${router.query.id}/add/annotation`, {
@@ -143,9 +152,6 @@ const Session: NextPage<props> = ({session, seats, course, students, answers, an
 
         setShowAnnotationModal(false)
     }
-
-    // saving answers and annotations directly to the database is benefitial as you get live updates when you visit the course or landing page
-    // during the session
 
     const saveAnswer = async (quality: number) => {
         await fetch(`/api/session/${router.query.id}/add/answer`, {
@@ -177,13 +183,13 @@ const Session: NextPage<props> = ({session, seats, course, students, answers, an
         router.reload()
     }
 
-    const date = new Date(parseInt(session.date))
+    const deleteSession = async () => {
+        if(!confirm("Willst du wirklich die Session löschen? Alle Ratings werden auf den Stand von vor der Session zurückgesetzt. Dies kann nicht rückgängig gemacht werden")) return
 
-    const leaderboardColors = [
-        "text-amber-400",
-        "text-slate-400",
-        "text-amber-700"
-    ]
+        await fetch(`/api/session/${router.query.id}/delete`)
+
+        router.push(`/course/${course.id}`)
+    }
 
     // shown when the session has ended (sesion summary)
     const completeSession = (
@@ -266,6 +272,10 @@ const Session: NextPage<props> = ({session, seats, course, students, answers, an
                             }
                         </div>
                     </div>
+                </div>
+
+                <div className="w-full flex items-center justify-center mt-3">
+                    <button onClick={() => deleteSession()} className="bg-red-500 text-slate-50 text-xl text-center p-2 rounded-md flex flex-row items-center justify-center font-semibold space-x-3"><MdCancel className="h-6 w-6 mr-3" /> Löschen</button>
                 </div>
 
             </main>
