@@ -82,12 +82,12 @@ const Seatingplan: NextPage<props> = ({seats, seatingplan, studentsNotAssigned})
 
                 </div>
 
-                {/* seatingplan */}
+                {/* seatingplan (needs fixing in terms of fixed width / height values, no time right now)*/}
                 <div className="w-full flex items-center seatingplan-scrollable overflow-x-scroll">
-                    <div className="w-[1800px] h-[695px] bg-white rounded-md flex flex-row justify-between p-3 space-x-2 !mt-10">
+                    <div className=" bg-white rounded-md flex flex-row justify-between p-3 space-x-10 !mt-10">
 
-                        <div className="flex flex-col items-center justify-between space-y-10">
-                            <div className="w-[500px] h-[400px] top-0 grid grid-cols-2 grid-rows-3 gap-1">
+                        <div className="h-[620px] flex flex-col items-center justify-between space-y-10">
+                            <div className="h-[370px] w-[450px] grid grid-cols-2 grid-rows-3 gap-1">
                                 {
                                     // This is very ugly, but necessary to keep the functionality of placing students with visual impairments on 
                                     // proper seats simple (place them by index)
@@ -102,7 +102,7 @@ const Seatingplan: NextPage<props> = ({seats, seatingplan, studentsNotAssigned})
                                     })
                                 }
                                 {
-                                    seats.slice(7, 9).map(seat => {
+                                    seats.slice(6, 8).map(seat => {
                                         return (
                                             <Seat 
                                                 seat={seat} 
@@ -113,7 +113,7 @@ const Seatingplan: NextPage<props> = ({seats, seatingplan, studentsNotAssigned})
                                     })
                                 }
                                 {
-                                    seats.slice(14, 16).map(seat => {
+                                    seats.slice(12, 14).map(seat => {
                                         return (
                                             <Seat 
                                                 seat={seat} 
@@ -129,11 +129,11 @@ const Seatingplan: NextPage<props> = ({seats, seatingplan, studentsNotAssigned})
                             </div>
                         </div>
 
-                        <div className="w-[1200px] grid grid-cols-5 grid-rows-5 gap-1">
+                        <div className="w-[900px] grid grid-cols-4 grid-rows-5 gap-1">
                             {
                                 // This is very ugly, but necessary to keep the functionality of placing students with visual impairments on 
                                 // proper seats simple (place them by index)
-                                seats.slice(2, 7).map(seat => {
+                                seats.slice(2, 6).map(seat => {
                                     return (
                                         <Seat 
                                             seat={seat} 
@@ -144,7 +144,7 @@ const Seatingplan: NextPage<props> = ({seats, seatingplan, studentsNotAssigned})
                                 })
                             }
                             {
-                                seats.slice(9, 14).map(seat => {
+                                seats.slice(8, 12).map(seat => {
                                     return (
                                         <Seat 
                                             seat={seat} 
@@ -155,7 +155,7 @@ const Seatingplan: NextPage<props> = ({seats, seatingplan, studentsNotAssigned})
                                 })
                             }
                             {
-                                seats.slice(16).map(seat => {
+                                seats.slice(14).map(seat => {
                                     return (
                                         <Seat 
                                             seat={seat} 
@@ -243,7 +243,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
     let seats: seat[] = []
 
-    for(let i = 0; i < 30; i++) {
+    for(let i = 0; i < 26; i++) {
         let seat: any = seatsInDatabase.find(seat => seat.index == i)
         if(seat == undefined) {
             seat = {

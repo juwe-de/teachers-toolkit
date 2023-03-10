@@ -40,7 +40,7 @@
         background-color: #48bb78;
     }
 
-    @media (min-width: 1800px) {
+    @media (min-width: 1390px) {
         .seatingplan-scrollable {
             justify-content: center;
         }

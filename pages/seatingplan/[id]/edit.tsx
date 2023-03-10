@@ -398,116 +398,118 @@ const EditSeatingplan: NextPage<props> = ({students, seats, prevTitle}) => {
                         </div>
                     </div>
 
-                    {/* Seatingplan */}
+                                            
+
+                </div>
+
+                {/* Seatingplan */}
                     
-                        <div className="w-[1100px] bg-white rounded-md flex flex-row justify-between p-3 space-x-2 !mt-10">
+                <div className="bg-white rounded-md flex flex-row justify-between p-3 space-x-10 !mt-10">
 
-                            <div className="flex flex-col items-center justify-between space-y-10">
-                                <div className="w-[305px] h-[232px] top-0 grid grid-cols-2 grid-rows-3 gap-1">
-                                    {
-                                        // This is very ugly, but necessary to keep the functionality of placing students with visual impairments on 
-                                        // proper seats simple (place them by index)
-                                        seatingplan.slice(0, 2).map(seat => {
-                                            return (
-                                                <DraggableSeat  
-                                                    seat={seat} 
-                                                    onDragStart={(index: number) => dragItem.current = index}
-                                                    onDragEnd={() => handleDropAssigned()} 
-                                                    onDragEnter={(index: number) => dragOverItem.current = index}
-                                                    width={150}
-                                                    height={75}
-                                                />
-                                            )
-                                        })
-                                    }
-                                    {
-                                        seatingplan.slice(7, 9).map(seat => {
-                                            return (
-                                                <DraggableSeat 
-                                                    seat={seat} 
-                                                    onDragStart={(index: number) => dragItem.current = index}
-                                                    onDragEnd={() => handleDropAssigned()} 
-                                                    onDragEnter={(index: number) => dragOverItem.current = index}
-                                                    width={150}
-                                                    height={75} 
-                                                />
-                                            )
-                                        })
-                                    }
-                                    {
-                                        seatingplan.slice(14, 16).map(seat => {
-                                            return (
-                                                <DraggableSeat 
-                                                    seat={seat} 
-                                                    onDragStart={(index: number) => dragItem.current = index}
-                                                    onDragEnd={() => handleDropAssigned()} 
-                                                    onDragEnter={(index: number) => dragOverItem.current = index}
-                                                    width={150}
-                                                    height={75} 
-                                                />
-                                            )
-                                        })
-                                    }
-                                </div>
-                                <div className="bg-white w-[150px] h-[75px] border border-zinc-500 flex flex-col items-center justify-center text-xs p-1">
-                                    <p className="text-lg font-semibold">Sniper</p>
-                                </div>
-                            </div>
-
-                            <div className="w-[760px] grid grid-cols-5 grid-rows-5 gap-1">
-                                {
-                                    // This is very ugly, but necessary to keep the functionality of placing students with visual impairments on 
-                                    // proper seats simple (place them by index)
-                                    seatingplan.slice(2, 7).map(seat => {
-                                        return (
-                                            <DraggableSeat 
-                                                seat={seat} 
-                                                onDragStart={(index: number) => dragItem.current = index}
-                                                onDragEnd={() => handleDropAssigned()} 
-                                                onDragEnter={(index: number) => dragOverItem.current = index}
-                                                width={150}
-                                                height={75}
-                                            />
-                                        )
-                                    })
-                                }
-                                {
-                                    seatingplan.slice(9, 14).map(seat => {
-                                        return (
-                                            <DraggableSeat 
-                                                seat={seat} 
-                                                onDragStart={(index: number) => dragItem.current = index}
-                                                onDragEnd={() => handleDropAssigned()} 
-                                                onDragEnter={(index: number) => dragOverItem.current = index}
-                                                width={150}
-                                                height={75} 
-                                            />
-                                        )
-                                    })
-                                }
-                                {
-                                    seatingplan.slice(16).map(seat => {
-                                        return (
-                                            <DraggableSeat 
-                                                seat={seat} 
-                                                onDragStart={(index: number) => dragItem.current = index}
-                                                onDragEnd={() => handleDropAssigned()} 
-                                                onDragEnter={(index: number) => dragOverItem.current = index}
-                                                width={150}
-                                                height={75}
-                                            />
-                                        )
-                                    })
-                                }
-                            </div>
-
+                    <div className="flex flex-col items-center justify-between space-y-10">
+                        <div className="h-[232px] top-0 grid grid-cols-2 grid-rows-3 gap-1">
+                            {
+                                // This is very ugly, but necessary to keep the functionality of placing students with visual impairments on 
+                                // proper seats simple (place them by index)
+                                seatingplan.slice(0, 2).map(seat => {
+                                    return (
+                                        <DraggableSeat  
+                                            seat={seat} 
+                                            onDragStart={(index: number) => dragItem.current = index}
+                                            onDragEnd={() => handleDropAssigned()} 
+                                            onDragEnter={(index: number) => dragOverItem.current = index}
+                                            width={150}
+                                            height={75}
+                                        />
+                                    )
+                                })
+                            }
+                            {
+                                seatingplan.slice(6, 8).map(seat => {
+                                    return (
+                                        <DraggableSeat 
+                                            seat={seat} 
+                                            onDragStart={(index: number) => dragItem.current = index}
+                                            onDragEnd={() => handleDropAssigned()} 
+                                            onDragEnter={(index: number) => dragOverItem.current = index}
+                                            width={150}
+                                            height={75} 
+                                        />
+                                    )
+                                })
+                            }
+                            {
+                                seatingplan.slice(12, 14).map(seat => {
+                                    return (
+                                        <DraggableSeat 
+                                            seat={seat} 
+                                            onDragStart={(index: number) => dragItem.current = index}
+                                            onDragEnd={() => handleDropAssigned()} 
+                                            onDragEnter={(index: number) => dragOverItem.current = index}
+                                            width={150}
+                                            height={75} 
+                                        />
+                                    )
+                                })
+                            }
                         </div>
+                        <div className="bg-white w-[150px] h-[75px] border border-zinc-500 flex flex-col items-center justify-center text-xs p-1">
+                            <p className="text-lg font-semibold">Sniper</p>
+                        </div>
+                    </div>
 
-                        <div className="flex flex-row items-center justify-center space-x-4 mt-10">
-                            <button onClick={() => save()} className="bg-green-500 text-slate-50 text-xl text-center p-2 rounded-md flex flex-row items-center justify-center font-semibold space-x-3"><BiSave className="h-6 w-6 mr-3" /> Speichern </button>
-                            <button onClick={() => cancel()} className="bg-red-500 text-slate-50 text-xl text-center p-2 rounded-md flex flex-row items-center justify-center font-semibold space-x-3"><MdCancel className="h-6 w-6 mr-3" /> Abbrechen</button>
-                        </div>                    
+                    <div className="grid grid-cols-4 grid-rows-5 gap-1">
+                        {
+                            // This is very ugly, but necessary to keep the functionality of placing students with visual impairments on 
+                            // proper seats simple (place them by index)
+                            seatingplan.slice(2, 6).map(seat => {
+                                return (
+                                    <DraggableSeat 
+                                        seat={seat} 
+                                        onDragStart={(index: number) => dragItem.current = index}
+                                        onDragEnd={() => handleDropAssigned()} 
+                                        onDragEnter={(index: number) => dragOverItem.current = index}
+                                        width={150}
+                                        height={75}
+                                    />
+                                )
+                            })
+                        }
+                        {
+                            seatingplan.slice(8, 12).map(seat => {
+                                return (
+                                    <DraggableSeat 
+                                        seat={seat} 
+                                        onDragStart={(index: number) => dragItem.current = index}
+                                        onDragEnd={() => handleDropAssigned()} 
+                                        onDragEnter={(index: number) => dragOverItem.current = index}
+                                        width={150}
+                                        height={75} 
+                                    />
+                                )
+                            })
+                        }
+                        {
+                            seatingplan.slice(14).map(seat => {
+                                return (
+                                    <DraggableSeat 
+                                        seat={seat} 
+                                        onDragStart={(index: number) => dragItem.current = index}
+                                        onDragEnd={() => handleDropAssigned()} 
+                                        onDragEnter={(index: number) => dragOverItem.current = index}
+                                        width={150}
+                                        height={75}
+                                    />
+                                )
+                            })
+                        }
+                    </div>
 
+                </div>
+
+                <div className="flex flex-row items-center justify-center space-x-4 mt-10">
+                    <button onClick={() => save()} className="bg-green-500 text-slate-50 text-xl text-center p-2 rounded-md flex flex-row items-center justify-center font-semibold space-x-3"><BiSave className="h-6 w-6 mr-3" /> Speichern </button>
+                    <button onClick={() => cancel()} className="bg-red-500 text-slate-50 text-xl text-center p-2 rounded-md flex flex-row items-center justify-center font-semibold space-x-3"><MdCancel className="h-6 w-6 mr-3" /> Abbrechen</button>
                 </div>
             
             </main>
@@ -562,7 +564,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
     let seats: seat[] = []
 
-    for(let i = 0; i < 30; i++) {
+    for(let i = 0; i < 26; i++) {
         let seat: any = seatsInDatabase.find(seat => seat.index == i)
         if(seat == undefined) {
             seat = {
