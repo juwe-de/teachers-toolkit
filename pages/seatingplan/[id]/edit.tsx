@@ -330,7 +330,7 @@ const EditSeatingplan: NextPage<props> = ({students, seats, prevTitle}) => {
 
                     {/* Heading */}
                     <div className="w-full text-4xl text-blue-400 border-b border-zinc-500 px-4 text-center md:text-left md:mx-4 py-2">
-                        <h1>Erstelle einen Sitzplan</h1>
+                        <h1>Bearbeite {prevTitle}</h1>
                     </div>
 
 
