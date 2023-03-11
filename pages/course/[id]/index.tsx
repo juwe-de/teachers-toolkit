@@ -119,6 +119,25 @@ const Course: NextPage<props> = ({course, students, answers, annotations, groupi
         setStudentData([...studentsWithRatings])
     }
 
+    const calculateCourseRating = () => {
+        // how important is quantity and quality?
+        const quantityValue = course.quantityValue / 100
+        const qualityValue = 1 - quantityValue
+
+        let averageAnswerQuality = 0
+        if(answers.length > 0) {
+            averageAnswerQuality = answers.reduce((totalQuality, nextAnswer) => totalQuality + nextAnswer.quality, 0) / answers.length
+        }
+
+        // calculate partial rating
+        let rating = Math.ceil(averageAnswerQuality * qualityValue + answers.length * 2 * quantityValue)
+
+        // finish calculating rating 
+        annotations.map(annotation => annotation.type == 0 ? rating++ : rating--)
+
+        return rating
+    }
+
     useEffect(() => {
         calculateStudentRatings()
     }, [filterMenuValue])
@@ -151,6 +170,12 @@ const Course: NextPage<props> = ({course, students, answers, annotations, groupi
                         </div>
                     </div>
                     <div className="w-full max-w-2xl flex flex-col items-center justify-center mt-10 space-y-10 px-4">
+
+                        <div className="flex flex-col items-center justify-center w-20 h-20 rounded-full border border-green-500 text-green-500 bg-white">
+                            <p className="text-xs">Kurs-Rating</p>
+                            <p className="text-sm font-semibold">{calculateCourseRating()}</p>
+                        </div>
+
                         <div className="w-full bg-white flex flex-col items-center justify-center border border-zinc-500 rounded-md !mt-10 p-3 relative">
 
                             <div className="w-full flex flex-col items-center justify-center space-y-2 border-b border-zinc-500 pb-1 mx-4 text-stone-800">
