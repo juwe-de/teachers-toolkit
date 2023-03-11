@@ -311,7 +311,7 @@ const Course: NextPage<props> = ({course, students, answers, annotations, groupi
                                 {sessions.length == 0 && (<p>In diesem Kurs wurden noch keine Sessions gehalten...</p>)}
                                 {
                                     sessions.filter(session => session.duration == 0).length == 0 && (
-                                        <Link href={`/course/${course.id}/create/seatingplan`} className={`w-full bg-slate-50 text-center text-lg border border-zinc-500 rounded-sm`}>+</Link>
+                                        <Link href={`/course/${course.id}/create/session`} className={`w-full bg-slate-50 text-center text-lg border border-zinc-500 rounded-sm`}>+</Link>
                                     )
                                 }
                             </div>
