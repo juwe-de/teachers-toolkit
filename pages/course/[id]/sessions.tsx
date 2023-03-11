@@ -71,6 +71,10 @@ const Sessions: NextPage<props> = ({sessions, course}) => {
                             )
                         })
                     }
+
+                    {sessions.length == 0 && (
+                        <p>In diesem Kurs wurden keine Sessions gehalten.</p>
+                    )}
                 </div>
 
             </main>
