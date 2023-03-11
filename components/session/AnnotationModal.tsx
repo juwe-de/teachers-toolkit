@@ -30,6 +30,7 @@ const AnnotationModal: FunctionComponent<props> = ({type, close, save, show}) =>
                     className="focus:outline-none w-3/4 bg-slate-50 border border-zinc-500 mt-6 rounded-sm p-2 text-stone-800 !mx-4" 
                     placeholder={type == 1 ? "Was hat er/sie angestellt?" : "Warum ist er/sie so super?"}
                     onChange={(e) => setDescription(e.target.value)}
+                    value={description}
                 />
 
                 <div className="flex flex-row items-center justify-center space-x-4 mt-5">
