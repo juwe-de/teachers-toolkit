@@ -1,6 +1,6 @@
 import { GetServerSideProps, NextPage } from "next";
 import { useRouter } from "next/router";
-import { MdEdit } from "react-icons/md";
+import { MdCancel, MdEdit } from "react-icons/md";
 import prisma from "../../../components/Client";
 import Footer from "../../../components/Footer";
 import Header from "../../../components/Header";
@@ -96,6 +96,16 @@ const Student: NextPage<props> = ({student, courses, answers, annotations, sessi
         return rating
 
     }
+    
+    const deleteStudent = async () => {
+
+        if(!confirm("Willst du diesen Schüler wirklich löschen? Er/Sie wird aus allen Kursen, Sitzplänen, Gruppeneinteilungen und Sessions entfernt. DIES KANN NICHT RÜCKGÄNGIG GEMACHT WERDEN")) return
+
+        await fetch(`/api/student/${student.id}/delete`)
+
+        router.push("/")
+
+    }
 
     return (
         <div className="min-h-screen flex flex-col justify-between space-y-10">
@@ -177,6 +187,10 @@ const Student: NextPage<props> = ({student, courses, answers, annotations, sessi
 
                     </div>
 
+                </div>
+
+                <div className="w-full flex items-center justify-center mt-3">
+                    <button onClick={() => deleteStudent()} className="bg-red-500 text-slate-50 text-xl text-center p-2 rounded-md flex flex-row items-center justify-center font-semibold space-x-3"><MdCancel className="h-6 w-6 mr-3" /> Löschen</button>
                 </div>
             
             </main>
