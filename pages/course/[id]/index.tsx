@@ -139,6 +139,15 @@ const Course: NextPage<props> = ({course, students, answers, annotations, groupi
         calculateStudentRatings()
     }, [filterMenuValue])
 
+    const createSession = () => {
+        if(seatingplans.length == 0) {
+            alert("Bitte erstelle zuerst einen Sitzplan")
+            return 
+        }
+
+        router.push(`/course/${course.id}/create/session`)
+    }
+
     return (
         <div className="min-h-screen flex flex-col justify-between space-y-10">
             <Header />
@@ -335,7 +344,7 @@ const Course: NextPage<props> = ({course, students, answers, annotations, groupi
                                 {sessions.length == 0 && (<p>In diesem Kurs wurden kürzlich keine Sessions gehalten...</p>)}
                                 {
                                     sessions.filter(session => session.duration == 0).length == 0 && (
-                                        <Link href={`/course/${course.id}/create/session`} className={`w-full bg-slate-50 text-center text-lg border border-zinc-500 rounded-sm`}>+</Link>
+                                        <button onClick={() => createSession()} className={`w-full bg-slate-50 text-center text-lg border border-zinc-500 rounded-sm`}>+</button>
                                     )
                                 }
                             </div>
