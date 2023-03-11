@@ -47,7 +47,7 @@ const Sessions: NextPage<props> = ({sessions, course}) => {
                             const createdDate = new Date(parseInt(session.date))
 
                             return (
-                                <Link href={`/session/${session.id}`} className="flex flex-row justify-between items-center w-full bg-white text-stone-800 text-lg border border-zinc-500 p-2 cursor-pointer rounded-sm hover:bg-slate-50">
+                                <Link href={`/session/${session.id}`} className="flex flex-row space-x-4 justify-between items-center w-full bg-white text-stone-800 text-lg border border-zinc-500 p-2 cursor-pointer rounded-sm hover:bg-slate-50">
                                     <div className="w-80 flex flex-row items-center justify-between">
                                         <p className="w-full">{session.topic}</p>
                                     </div>

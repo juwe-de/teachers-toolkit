@@ -32,6 +32,8 @@ const AnswerModal: FunctionComponent<props> = ({close, save, show}) => {
                         count={5}
                         rating={quality}
                         setRating={(rating: number) => setQuality(rating)}
+                        editable={true}
+                        size={14}
                     />
                     
                 </div>

@@ -1,4 +1,4 @@
-import next, { GetServerSideProps, NextPage } from "next"
+import { GetServerSideProps, NextPage } from "next"
 
 import Footer from "../../../components/Footer"
 import Header from "../../../components/Header"
@@ -6,13 +6,10 @@ import Header from "../../../components/Header"
 import prisma from "../../../components/Client"
 import { MdOutlineClass, MdSubject, MdEdit } from "react-icons/md"
 import { AiOutlineClockCircle } from "react-icons/ai"
-import StudentItem from "../../../components/course/StudentItem"
-import ExistingStudentItem from "../../../components/course/ExistingStudentItem"
 import { useEffect, useState } from "react"
 import { BsGenderMale, BsGenderFemale, BsFilterSquare } from "react-icons/bs"
 import { useRouter } from "next/router"
 import Link from "next/link"
-import { create } from "domain"
 
 type course = {
     id: string,
@@ -156,11 +153,11 @@ const Course: NextPage<props> = ({course, students, answers, annotations, groupi
                         </div>
 
                         <div className="flex flex-row items-center justify-start text-stone-800 text-sm space-x-2">
-                            <div className="flex flex-row items-center justify-center space-x-1"><MdSubject className="w-4 h-4 mr-1" /> {course.subject}</div>
-                            <div className="flex flex-row items-center justify-center space-x-1"><MdOutlineClass className="w-4 h-4 mr-1" /> Jahrgang {course.year}</div>
-                            <div className="flex flex-row items-center justify-center space-x-1">
-                                <AiOutlineClockCircle className="w-4 h-4" />
-                                <div className="flex flex-row items-left justify-center">
+                            <div className="flex flex-row items-center justify-center space-x-1 text-lg"><MdSubject className="w-5 h-5 mr-1" /> {course.subject}</div>
+                            <div className="flex flex-row items-center justify-center space-x-1 text-lg"><MdOutlineClass className="w-5 h-5 mr-1" /> Jahrgang {course.year}</div>
+                            <div className="flex flex-row items-center justify-center space-x-1 text-lg">
+                                <AiOutlineClockCircle className="w-5 h-5" />
+                                <div className="flex flex-row items-left justify-center text-lg">
                                     Erstellt am 
                                     <p className="ml-1">{created.getDate() < 10 ? "0" : ""}{created.getDate()}.</p>
                                     <p>{created.getMonth() + 1 < 10 ? "0" : ""}{created.getMonth() + 1}.</p>
@@ -173,7 +170,7 @@ const Course: NextPage<props> = ({course, students, answers, annotations, groupi
 
                         <div className="flex flex-col items-center justify-center w-20 h-20 rounded-full border border-green-500 text-green-500 bg-white">
                             <p className="text-xs">Kurs-Rating</p>
-                            <p className="text-sm font-semibold">{calculateCourseRating()}</p>
+                            <p className="font-semibold">{calculateCourseRating()}</p>
                         </div>
 
                         <div className="w-full bg-white flex flex-col items-center justify-center border border-zinc-500 rounded-md !mt-10 p-3 relative">
@@ -200,7 +197,8 @@ const Course: NextPage<props> = ({course, students, answers, annotations, groupi
                                         const rating = object.rating
                                         const student = object.student
                                         return(
-                                            <div key={student.id} className="flex flex-row justify-between items-center w-full text-stone-800 text-lg border-b border-zinc-500 border-dashed last:border-0 py-2 cursor-pointer hover:bg-slate-50">
+                                            <Link href={`/student/${student.id}`} key={student.id} className="flex flex-row justify-between items-center w-full text-stone-800 text-lg border-b border-zinc-500 border-dashed last:border-0 py-2 cursor-pointer hover:bg-slate-50" >
+                                                
                                                 <div className="w-80 flex flex-row items-center justify-between">
                                                     <p className="w-full">{student.sirname}, {student.name}</p>
                                                     {student.gender == 0 ? (<BsGenderMale />) : (<BsGenderFemale />)}
@@ -208,7 +206,8 @@ const Course: NextPage<props> = ({course, students, answers, annotations, groupi
                                                 <p>
                                                     {rating}
                                                 </p>
-                                            </div>
+                                                
+                                            </Link>
                                         )
                                     })
                                 }
