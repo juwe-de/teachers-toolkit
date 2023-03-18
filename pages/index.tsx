@@ -244,6 +244,7 @@ const Home: NextPage<props> = ({students, courses, answers, annotations, session
 
                         <div className="w-full flex flex-col items-center justify-center space-y-2 border-b border-zinc-500 pb-1 mx-4 text-stone-800">
                             <h1 className="text-center text-2xl font-md">All-Time Bestenliste</h1>
+                            <Link href="/leaderboard" className="text-blue-500 underline">Alle anzeigen</Link>
                         </div>
 
                         <div className="flex flex-col space-y-2 items-center justify-center w-full px-5 mt-5">
