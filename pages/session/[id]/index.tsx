@@ -313,7 +313,7 @@ const Session: NextPage<props> = ({session, seats, course, students, answers, an
                                     })
                                 }
                                 {
-                                    seats.slice(7, 9).map(seat => {
+                                    seats.slice(6, 8).map(seat => {
                                         return (
                                             <Seat 
                                                 seat={seat} 
@@ -326,7 +326,7 @@ const Session: NextPage<props> = ({session, seats, course, students, answers, an
                                     })
                                 }
                                 {
-                                    seats.slice(14, 16).map(seat => {
+                                    seats.slice(12, 14).map(seat => {
                                         return (
                                             <Seat 
                                                 seat={seat} 
@@ -344,11 +344,11 @@ const Session: NextPage<props> = ({session, seats, course, students, answers, an
                             </div>
                         </div>
 
-                        <div className="w-[1200px] grid grid-cols-5 grid-rows-5 gap-1">
+                        <div className="w-[1200px] grid grid-cols-4 grid-rows-5 gap-1">
                             {
                                 // This is very ugly, but necessary to keep the functionality of placing students with visual impairments on 
                                 // proper seats simple (place them by index)
-                                seats.slice(2, 7).map(seat => {
+                                seats.slice(2, 6).map(seat => {
                                     return (
                                         <Seat 
                                             seat={seat} 
@@ -361,7 +361,7 @@ const Session: NextPage<props> = ({session, seats, course, students, answers, an
                                 })
                             }
                             {
-                                seats.slice(9, 14).map(seat => {
+                                seats.slice(8, 12).map(seat => {
                                     return (
                                         <Seat 
                                             seat={seat} 
@@ -374,7 +374,7 @@ const Session: NextPage<props> = ({session, seats, course, students, answers, an
                                 })
                             }
                             {
-                                seats.slice(16).map(seat => {
+                                seats.slice(14).map(seat => {
                                     return (
                                         <Seat 
                                             seat={seat} 
@@ -447,7 +447,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
     let seats: seat[] = []
 
-    for(let i = 0; i < 30; i++) {
+    for(let i = 0; i < 26; i++) {
         let seat: any = seatsInDatabase.find(seat => seat.index == i)
         if(seat == undefined) {
             seat = {

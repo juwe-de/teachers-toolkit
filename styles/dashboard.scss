@@ -1,0 +1,42 @@
+@function randomNum($min, $max) {
+    $rand: random();
+    $randomNum: $min + floor($rand * (($max - $min) + 1));
+
+    @return $randomNum;
+}
+
+$duration: 1000;
+
+.confetti {
+    position: absolute;
+    width: 8px;
+    height: 16px;
+    top: 0;
+    opacity: 0;
+
+    @for $i from 0 through 19 {
+        &:nth-child(#{$i}) {
+            left: $i * 5%;
+            transform: rotate(#{randomNum(-80, 80)}deg);
+            animation: makeItRain $duration * 1ms infinite ease-out;
+            animation-delay: #{randomNum(0, $duration * .5)}ms;
+            animation-duration: #{randomNum($duration * .7, $duration * 1.2)}ms;
+            // TODO: specify color selection
+            background: rgb(randomNum(0, 255), randomNum(0, 255), randomNum(0, 255));
+        }
+    }
+}
+
+@keyframes makeItRain {
+    from {
+      opacity: 0;
+    }
+    
+    50% {
+      opacity: 1;
+    }
+    
+    to {
+      transform: translateY(50px);
+    }
+}

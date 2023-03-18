@@ -30,14 +30,16 @@ type course = {
 type answer = {
     id: string,
     quality: number,
-    sessionId: string
+    sessionId: string,
+    studentId: string,
 }
 
 type annotation = {
     id: string,
     type: number,
     description: string,
-    sessionId: string
+    sessionId: string,
+    studentId: string,
 }
 
 type session = {
@@ -77,8 +79,8 @@ const Student: NextPage<props> = ({student, courses, answers, annotations, sessi
 
         sessions.map(session => {
             const course = allCourses.find(course => course.id == session.courseId)
-            const answersInSession = answers.filter(answer => answer.sessionId == session.id)
-            const annotationsInSession = annotations.filter(annotation => annotation.sessionId == session.id)
+            const answersInSession = answers.filter(answer => answer.sessionId == session.id && answer.studentId == student.id)
+            const annotationsInSession = annotations.filter(annotation => annotation.sessionId == session.id && annotation.studentId == student.id)
 
             if(course == undefined) return
 
@@ -87,7 +89,9 @@ const Student: NextPage<props> = ({student, courses, answers, annotations, sessi
             const qualityValue = 1 - quantityValue
 
             // calculate partial rating
-            rating += Math.ceil(averageAnswerQuality * qualityValue + answersInSession.length * 2 * quantityValue)
+            if(answersInSession.length > 0) {
+                rating += Math.ceil(averageAnswerQuality * qualityValue + answersInSession.length * 2 * quantityValue)
+            }
 
             // finish calculating rating 
             annotationsInSession.map(annotation => annotation.type == 0 ? rating++ : rating--)
@@ -170,7 +174,7 @@ const Student: NextPage<props> = ({student, courses, answers, annotations, sessi
                         <div className="flex flex-col space-y-2 items-center justify-center w-full px-5 mt-5">
                             {/* List all of the courses */}
                             {
-                                courses.length == 0 ? (<p>In diesem Kurs sind keine Schüler...</p>) : courses.map(course => {
+                                courses.length == 0 ? (<p>Dieser Schüler ist in keinem Kurs...</p>) : courses.map(course => {
                                     return(
                                         <Link href={`/course/${course.id}`} key={course.id} className="flex flex-row justify-between items-center w-full text-stone-800 text-lg border-b border-zinc-500 border-dashed last:border-0 py-2 cursor-pointer hover:bg-slate-50" >
                                             
