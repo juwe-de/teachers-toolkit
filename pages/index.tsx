@@ -255,7 +255,10 @@ const Home: NextPage<props> = ({students, courses, answers, annotations, session
                                         <div className="w-full flex flex-row items-center justify-between space-x-2">
                                             <p className={`font-semibold ${index <= 2 ? leaderboardColors[index] : "text-stone-800"}`}>{index+1}.</p>
                                             <p className="w-full">{object.student.sirname}, {object.student.name}</p>
-                                            <p className="text-right">{object.rating}</p>
+                                            <div className="flex flex-row space-x-1 items-center justify-center w-20">
+                                                <GiPodium className="w-5 h-5"/>
+                                                <p className="text-right">{object.rating}</p>
+                                            </div>
                                         </div>
                                         
                                     </Link>

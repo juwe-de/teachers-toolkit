@@ -13,6 +13,7 @@ import { MdCancel, MdOutlineClass, MdSubject } from "react-icons/md";
 import { BsFillCalendarDateFill } from "react-icons/bs";
 import { BsGenderFemale, BsGenderMale, BsFillHandThumbsUpFill, BsFillHandThumbsDownFill } from "react-icons/bs";
 import { HiHandRaised } from "react-icons/hi2"
+import { GiPodium } from "react-icons/gi";
 
 type session = {
     id: string,
@@ -263,9 +264,10 @@ const Session: NextPage<props> = ({session, seats, course, students, answers, an
                                             <div className="w-80 flex flex-row items-center justify-between">
                                                 <p className="w-full">{student.sirname}, {student.name}</p>
                                             </div>
-                                            <p>
-                                                {rating}
-                                            </p>
+                                            <div className="flex flex-row space-x-1 items-center justify-center w-20">
+                                                <GiPodium className="w-5 h-5"/>
+                                                <p className="text-right">{rating}</p>
+                                            </div>
                                         </div>
                                     )
                                 })

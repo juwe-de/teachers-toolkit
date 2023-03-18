@@ -10,6 +10,7 @@ import { useEffect, useState } from "react"
 import { BsGenderMale, BsGenderFemale, BsFilterSquare } from "react-icons/bs"
 import { useRouter } from "next/router"
 import Link from "next/link"
+import { GiPodium } from "react-icons/gi"
 
 type course = {
     id: string,
@@ -212,9 +213,10 @@ const Course: NextPage<props> = ({course, students, answers, annotations, groupi
                                                     <p className="w-full">{student.sirname}, {student.name}</p>
                                                     {student.gender == 0 ? (<BsGenderMale />) : (<BsGenderFemale />)}
                                                 </div>
-                                                <p>
-                                                    {rating}
-                                                </p>
+                                                <div className="flex flex-row space-x-1 items-center justify-center w-20">
+                                                    <GiPodium className="w-5 h-5"/>
+                                                    <p className="text-right">{rating}</p>
+                                                </div>
                                                 
                                             </Link>
                                         )
