@@ -33,7 +33,7 @@ const AnswerModal: FunctionComponent<props> = ({close, save, show}) => {
                         rating={quality}
                         setRating={(rating: number) => setQuality(rating)}
                         editable={true}
-                        size={14}
+                        size={12}
                     />
                     
                 </div>
