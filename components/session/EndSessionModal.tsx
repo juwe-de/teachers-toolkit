@@ -24,7 +24,7 @@ const EndSessionModal: FunctionComponent<props> = ({save, close, show}) => {
                     </div>
                 </h1>
 
-                <form onSubmit={() => {save(topic, description); setTopic(""); setDescription("")}} className="w-3/4 flex flex-col items-center justify-center space-y-3 mt-6 text-stone-800">
+                <form onSubmit={(e) => {e.preventDefault(); save(topic, description); setTopic(""); setDescription("")}} className="w-3/4 flex flex-col items-center justify-center space-y-3 mt-6 text-stone-800">
                     <div className="flex flex-col items-center justify-center w-full space-y-1">
                         <p className="w-full text-left">Thema der Session</p>
                         <input placeholder="Spezielle Algorithmen" onChange={(e) => setTopic(e.target.value)} className="w-full focus:outline-none border border-zinc-500 bg-slate-50 p-1 rounded-md" />

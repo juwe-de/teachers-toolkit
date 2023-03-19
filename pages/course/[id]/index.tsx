@@ -321,7 +321,7 @@ const Course: NextPage<props> = ({course, students, answers, annotations, groupi
                                         return (
                                             <Link href={`/session/${object.id}`} className="flex flex-row justify-between items-center w-full text-stone-800 text-lg border-b border-zinc-500 border-dashed last:border-0 py-2 cursor-pointer hover:bg-slate-50">
                                                 <div className="w-80 flex flex-row items-center justify-between">
-                                                    <p className="w-full">{object.topic}</p>
+                                                    <p className="w-full">{object.topic == "" ? "Laufende Session" : object.topic}</p>
                                                 </div>
 
                                                 {object.duration == 0 && (

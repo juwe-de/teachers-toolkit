@@ -4,7 +4,7 @@ import { MdCancel, MdEdit } from "react-icons/md";
 import prisma from "../../../components/Client";
 import Footer from "../../../components/Footer";
 import Header from "../../../components/Header";
-import { BsFillHandThumbsDownFill, BsFillHandThumbsUpFill, BsGenderFemale, BsGenderMale } from "react-icons/bs";
+import { BsFillHandThumbsDownFill, BsFillHandThumbsUpFill, BsGenderFemale, BsGenderMale, BsInfo } from "react-icons/bs";
 import { FaBirthdayCake } from "react-icons/fa"
 import { AiOutlineEyeInvisible } from "react-icons/ai"
 import { HiHandRaised } from "react-icons/hi2";
@@ -68,14 +68,14 @@ const Student: NextPage<props> = ({student, courses, answers, annotations, sessi
         "Weitsichtig",
     ]
 
+    let averageAnswerQuality = 0
+    if(answers.length > 0) {
+        averageAnswerQuality = answers.reduce((totalQuality, nextAnswer) => totalQuality + nextAnswer.quality, 0) / answers.length
+    }
+
     const calculateRating = () => {
 
         let rating = 0
-
-        let averageAnswerQuality = 0
-        if(answers.length > 0) {
-            averageAnswerQuality = answers.reduce((totalQuality, nextAnswer) => totalQuality + nextAnswer.quality, 0) / answers.length
-        }
 
         sessions.map(session => {
             const course = allCourses.find(course => course.id == session.courseId)
@@ -163,6 +163,24 @@ const Student: NextPage<props> = ({student, courses, answers, annotations, sessi
                             <HiHandRaised className="text-yellow-400 h-6 w-6" />
                             <Link href={`/student/${student.id}/answers`} className="text-xl font-semibold text-blue-600 underline cursor-pointer">{answers.length}</Link>
                         </div>
+                    </div>
+
+                    <div className="flex flex-row items-center justify-center space-x-4 border border-zinc-500 rounded-md bg-white w-full max-w-2xl mt-5 p-4">
+                        <BsInfo className="w-8 h-8 bg-slate-50 rounded-full shadow-md"/>
+                        <p className="w-full text-center text-lg text-stone-800">
+                            {averageAnswerQuality == 1 && ("Bei diesem Schüler handelt es sich möglicherweise um einen Neandertaler.")}
+                            {averageAnswerQuality == 5 && ("Was ein Streber...")}
+                            {calculateRating() >= 1000 && ("MVP")}
+                            {annotations.filter(annotation => annotation.type == 1).length > annotations.filter(annotation => annotation.type == 0).length * 2 && ("Der hier braucht mal eine Lektion.")}
+                            {annotations.filter(annotation => annotation.type == 1).length == 0 && annotations.filter(annotation => annotation.type == 0).length > 20 && ("Teachers Pet")}
+                            {
+                                averageAnswerQuality != 1 && 
+                                averageAnswerQuality != 5 && calculateRating() < 1000 && 
+                                annotations.filter(annotation => annotation.type == 1).length < annotations.filter(annotation => annotation.type == 0).length * 2 &&
+                                !(annotations.filter(annotation => annotation.type == 1).length == 0 && annotations.filter(annotation => annotation.type == 0).length > 20)
+                                && ("Dieser Schüler ist ziemlich normal.")
+                            }
+                        </p>
                     </div>
 
                     <div className="w-full max-w-2xl bg-white flex flex-col items-center justify-center border border-zinc-500 rounded-md !mt-10 p-3 relative">
