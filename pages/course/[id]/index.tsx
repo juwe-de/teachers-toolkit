@@ -4,7 +4,7 @@ import Footer from "../../../components/Footer"
 import Header from "../../../components/Header"
 
 import prisma from "../../../components/Client"
-import { MdOutlineClass, MdSubject, MdEdit } from "react-icons/md"
+import { MdOutlineClass, MdSubject, MdEdit, MdCancel } from "react-icons/md"
 import { AiOutlineClockCircle } from "react-icons/ai"
 import { useEffect, useState } from "react"
 import { BsGenderMale, BsGenderFemale, BsFilterSquare } from "react-icons/bs"
@@ -147,6 +147,14 @@ const Course: NextPage<props> = ({course, students, answers, annotations, groupi
         }
 
         router.push(`/course/${course.id}/create/session`)
+    }
+
+    const deleteCourse = async () => {
+        if(!confirm("Möchtest du den Kurs wirklich löschen? ALLES, was mit diesem Kurs in Verbindung steht, wird gelöscht. DIES KANN NICHT RÜCKGÄNGIG GEMACHT WERDEN!")) return
+
+        await fetch(`/api/course/${course.id}/delete`)
+
+        router.push("/")
     }
 
     return (
@@ -354,6 +362,8 @@ const Course: NextPage<props> = ({course, students, answers, annotations, groupi
 
                     </div>
                 </div>
+
+                <button onClick={() => deleteCourse()} className="bg-red-500 text-slate-50 text-xl text-center p-2 rounded-md flex flex-row items-center justify-center font-semibold space-x-3 mt-10"><MdCancel className="h-6 w-6 mr-3" /> Löschen</button>
             </main>
 
             <Footer />
