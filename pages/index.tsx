@@ -265,6 +265,7 @@ const Home: NextPage<props> = ({students, courses, answers, annotations, session
                                     </Link>
                                 )
                             })}
+                            {studentData.length == 0 && (<p>Hier ist nichts los...</p>)}
                         </div>
 
                     </div>
@@ -314,6 +315,8 @@ const Home: NextPage<props> = ({students, courses, answers, annotations, session
                                             </Link>
                                         )
                                     })}
+                                    {courseData.length == 0 && (<p>Es wurden noch keine Kurse erstellt...</p>)}
+                                    <Link href={`/course/create`} className={`w-full bg-slate-50 text-center text-lg border border-zinc-500 rounded-sm`}>+</Link>
                                 </div>
                             </div>
                         </div>
