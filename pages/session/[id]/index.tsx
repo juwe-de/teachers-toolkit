@@ -431,7 +431,6 @@ const Session: NextPage<props> = ({session, seats, course, students, answers, an
 export const getServerSideProps: GetServerSideProps = async (context) => {
 
     const sessionId = context.query.id?.toString()
-    const seatingplanId = context.query.seatingplanId?.toString()
 
     const session = await prisma.session.findFirst({
         where: {
@@ -442,7 +441,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     const seatsInDatabase = await prisma.seat.findMany({
         where: {
             seatingplan: {
-                id: seatingplanId,
+                id: session?.seatingplanId
             }
         }
     })

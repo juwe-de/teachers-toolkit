@@ -3,7 +3,7 @@ import prisma from "../../../components/Client";
 
 export default async function handler(request: NextApiRequest, response: NextApiResponse) {
 
-    const {courseId} = request.body
+    const {courseId, seatingplanId} = request.body
 
     try {
 
@@ -16,6 +16,11 @@ export default async function handler(request: NextApiRequest, response: NextApi
                 course: {
                     connect: {
                         id: courseId
+                    }
+                },
+                seatingplan: {
+                    connect: {
+                        id: seatingplanId
                     }
                 }
             }

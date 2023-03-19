@@ -23,7 +23,8 @@ const CreateSession: NextPage<props> = ({seatingplans}) => {
     const create = async () => {
         const response = await fetch(`/api/session/create`, {
             body: JSON.stringify({
-                courseId: router.query.id?.toString()
+                courseId: router.query.id?.toString(),
+                seatingplanId: seatingplan
             }),
             method: "POST",
             headers: {
@@ -35,12 +36,7 @@ const CreateSession: NextPage<props> = ({seatingplans}) => {
 
         const sessionId = data.session.id
         
-        router.push({
-            pathname: `/session/${sessionId}`,
-            query: {
-                seatingplanId: seatingplan
-            }
-        })
+        router.push(`/session/${sessionId}`)
     }
 
     return (

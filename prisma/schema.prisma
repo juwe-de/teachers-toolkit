@@ -47,12 +47,13 @@ model Course_Participation {
 }
 
 model Seatingplan {
-  id       String @id @default(cuid())
-  course   Course @relation(fields: [courseId], references: [id])
+  id       String    @id @default(cuid())
+  course   Course    @relation(fields: [courseId], references: [id])
   courseId String
   title    String
   created  String
   seats    Seat[]
+  Session  Session[]
 }
 
 model Seat {
@@ -93,15 +94,17 @@ model Group_Member {
 }
 
 model Session {
-  id          String       @id @default(cuid())
-  course      Course       @relation(fields: [courseId], references: [id])
-  courseId    String
-  date        String
-  duration    Int
-  topic       String
-  description String
-  annotations Annotation[]
-  answers     Answer[]
+  id            String       @id @default(cuid())
+  course        Course       @relation(fields: [courseId], references: [id])
+  courseId      String
+  seatingplan   Seatingplan  @relation(fields: [seatingplanId], references: [id])
+  date          String
+  duration      Int
+  topic         String
+  description   String
+  annotations   Annotation[]
+  answers       Answer[]
+  seatingplanId String
 }
 
 model Annotation {
