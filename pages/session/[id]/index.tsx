@@ -14,6 +14,7 @@ import { BsFillCalendarDateFill } from "react-icons/bs";
 import { BsGenderFemale, BsGenderMale, BsFillHandThumbsUpFill, BsFillHandThumbsDownFill } from "react-icons/bs";
 import { HiHandRaised } from "react-icons/hi2"
 import { GiPodium } from "react-icons/gi";
+import Link from "next/link";
 
 type session = {
     id: string,
@@ -39,7 +40,8 @@ type seat = {
 
 type course = {
     id: string,
-    quantityValue: number
+    quantityValue: number,
+    title: string,
 }
 
 type answer = {
@@ -276,6 +278,10 @@ const Session: NextPage<props> = ({session, seats, course, students, answers, an
                     </div>
                 </div>
 
+                <Link href={`/course/${course.id}`} className="text-blue-500 underline text-xl mt-10">
+                    Zurück zu {course.title}
+                </Link>
+
                 <div className="w-full flex items-center justify-center mt-3">
                     <button onClick={() => deleteSession()} className="bg-red-500 text-slate-50 text-xl text-center p-2 rounded-md flex flex-row items-center justify-center font-semibold space-x-3"><MdCancel className="h-6 w-6 mr-3" /> Löschen</button>
                 </div>
@@ -394,6 +400,10 @@ const Session: NextPage<props> = ({session, seats, course, students, answers, an
 
                     
                 </div>
+
+                <Link href={`/course/${course.id}`} className="text-blue-500 underline text-xl mt-10">
+                    Zurück zu {course.title}
+                </Link>
 
                 <button onClick={() => setShowEndSessionModal(true)} className="rounded-md bg-blue-400 text-slate-50 text-2xl font-semibold p-2 mt-10">
                     Session beenden

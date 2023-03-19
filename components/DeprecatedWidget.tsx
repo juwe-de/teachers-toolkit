@@ -23,7 +23,7 @@ const DeprecatedWidget: FunctionComponent<props> = ({courses}) => {
         const createdDate = new Date(parseInt(course.created))
         const today = new Date()
 
-        return today.getDate() == createdDate.getDate() && today.getMonth() == createdDate.getMonth()
+        return today.getDate() == createdDate.getDate() && today.getMonth() == createdDate.getMonth() && today.getFullYear() != createdDate.getFullYear()
     })
 
     return (
