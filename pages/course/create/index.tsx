@@ -24,6 +24,15 @@ type existingStudent = {
     dateOfBirth: string,
     gender: number,
     visuals: number,
+    courses: course[]
+}
+
+type course = {
+    id: string,
+    title: string,
+    subject: string,
+    year: number,
+    quantityValue: number,
 }
 
 type props = {
@@ -261,8 +270,15 @@ const Create: NextPage<props> = ({ existingStudents }) => {
                                                     if(existingStudentsInCourse.includes(student)) return
                                                     
                                                     return (
-                                                        <button onClick={() => {setExistingStudentsInCourse([...existingStudentsInCourse, student]); setAddingStudent(!addingStudent)}} className="w-full bg-white border-b border-zinc-500 p-1 last:border-0 flex flex-row items-center justify-between text-stone-800 text-sm hover:bg-slate-50 cursor-pointer">
+                                                        <button onClick={() => {setExistingStudentsInCourse([...existingStudentsInCourse, student]); setAddingStudent(!addingStudent)}} className="w-full space-x-4 bg-white border-b border-zinc-500 p-1 last:border-0 flex flex-row items-center justify-between text-stone-800 text-sm hover:bg-slate-50 cursor-pointer">
                                                             <p>{student.sirname}, {student.name}</p>
+                                                            <div className="flex flex-row items-center justify-start space-x-2 over">
+                                                                {student.courses.map(course => {
+                                                                    return (
+                                                                        <p className="max-h-12 min-w-max bg-orange-600 text-slate-50 p-1 rounded-md">{course.title}</p>
+                                                                    )
+                                                                })}
+                                                            </div>
                                                         </button>
                                                     )
                                                 })}
@@ -286,9 +302,15 @@ const Create: NextPage<props> = ({ existingStudents }) => {
                                                     if(existingStudentsInCourse.includes(student)) return
 
                                                     return (
-                                                        <button onClick={() => {setExistingStudentsInCourse([...existingStudentsInCourse, student]); setAddingStudent(!addingStudent)}} className="w-full bg-white border-b border-zinc-500 p-1 last:border-0 flex flex-row items-center justify-between text-stone-800 text-sm hover:bg-slate-50 cursor-pointer">
+                                                        <button onClick={() => {setExistingStudentsInCourse([...existingStudentsInCourse, student]); setAddingStudent(!addingStudent)}} className="w-full space-x-4 bg-white border-b border-zinc-500 p-1 last:border-0 flex flex-row items-center justify-between text-stone-800 text-sm hover:bg-slate-50 cursor-pointer">
                                                             <p>{student.sirname}, {student.name}</p>
-                                                            
+                                                            <div className="flex flex-row items-center justify-start space-x-2 over">
+                                                                {student.courses.map(course => {
+                                                                    return (
+                                                                        <p className="max-h-12 min-w-max bg-orange-600 text-slate-50 p-1 rounded-md">{course.title}</p>
+                                                                    )
+                                                                })}
+                                                            </div>
                                                         </button>
                                                     )
                                                 })}
@@ -354,7 +376,34 @@ const Create: NextPage<props> = ({ existingStudents }) => {
 }
 
 export const getServerSideProps: GetServerSideProps = async () => {
-    const existingStudents = await prisma.student.findMany()
+    const existingStudentsInDatabase = await prisma.student.findMany()
+
+    const existingStudents: existingStudent[] = []
+
+    // find all of the courses each existing student is in
+    for(let existingStudentInDatabase of existingStudentsInDatabase) {
+        const courses = await prisma.course.findMany({
+            where: {
+                course_participation: {
+                    some: {
+                        student: {
+                            id: existingStudentInDatabase.id?.toString()
+                        }
+                    }
+                }
+            }
+        })
+
+        existingStudents.push({
+            name: existingStudentInDatabase.name,
+            sirname: existingStudentInDatabase.sirname,
+            dateOfBirth: existingStudentInDatabase.dateOfBirth,
+            id: existingStudentInDatabase.id,
+            gender: existingStudentInDatabase.gender,
+            visuals: existingStudentInDatabase.visuals,
+            courses: courses
+        })
+    }
 
     return {
         props: {existingStudents}
