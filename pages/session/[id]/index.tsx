@@ -427,7 +427,7 @@ const Session: NextPage<props> = ({session, seats, course, students, answers, an
                 <EndSessionModal
                     show={showEndSessionModal}
                     save={(topic: string, description: string) => endSession(topic, description)}
-                    close={() => setShowEndSessionModal(false)}
+                    close={(e: MouseEvent) => {e.preventDefault(); setShowEndSessionModal(false)}}
                 />
             </main>
 

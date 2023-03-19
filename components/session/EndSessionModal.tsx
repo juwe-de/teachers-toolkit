@@ -38,7 +38,7 @@ const EndSessionModal: FunctionComponent<props> = ({save, close, show}) => {
                         <button type="submit" className="text-lg font-semibold text-slate-50 bg-blue-400 border border-blue-400 p-2 rounded-full">
                             Abschließen
                         </button>
-                        <button onClick={() => close()} className="text-lg font-semibold p-2 text-red-500 hover:text-slate-50 border border-red-500 rounded-full hover:bg-red-500">
+                        <button onClick={(e) => close(e)} className="text-lg font-semibold p-2 text-red-500 hover:text-slate-50 border border-red-500 rounded-full hover:bg-red-500">
                             Abbrechen
                         </button>
                     </div>
