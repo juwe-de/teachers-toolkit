@@ -12,7 +12,7 @@ type Props = {
 
 const Menu : FunctionComponent<Props> = ({ active }) => {
     return (
-        <div className={`${active ? "opacity-100 translate-y-0 backdrop-blur-md" : "opacity-0 -translate-y-72 backdrop-blur-none"} z-0 md:hidden absolute top-12 left-0 p-2 w-full h-60 border border-zinc-500 flex flex-col space-y-4 justify-center items-center transition translate ease-in duration-300`}>
+        <div className={`${active ? "opacity-100 translate-y-0 backdrop-blur-md" : "opacity-0 -translate-y-72 backdrop-blur-none"} z-20 md:hidden absolute top-12 left-0 p-2 w-full h-60 border border-zinc-500 flex flex-col space-y-4 justify-center items-center transition translate ease-in duration-300`}>
             {/* Profile picture */}
             <Image src="/profile.jpg" alt={"Profilbild"} width={50} height={50} className="rounded-full border-4 border-stone-900" />
 
@@ -21,7 +21,7 @@ const Menu : FunctionComponent<Props> = ({ active }) => {
                 <p className="underline">Christopher</p>
             </div>
 
-            <Link href="/" className="flex flex-row space-x-1 text-lg text-stone-800 items-center">
+            <Link href="/search?term=" className="flex flex-row space-x-1 text-lg text-stone-800 items-center">
                 <AiOutlineSearch className="w-5 h-5"/>
                 <p>Suche</p>
             </Link>
