@@ -175,8 +175,9 @@ const Student: NextPage<props> = ({student, courses, answers, annotations, sessi
                             {annotations.filter(annotation => annotation.type == 1).length == 0 && annotations.filter(annotation => annotation.type == 0).length > 20 && ("Teachers Pet")}
                             {
                                 averageAnswerQuality != 1 && 
-                                averageAnswerQuality != 5 && calculateRating() < 1000 && 
-                                annotations.filter(annotation => annotation.type == 1).length < annotations.filter(annotation => annotation.type == 0).length * 2 &&
+                                averageAnswerQuality != 5 && 
+                                calculateRating() < 1000 && 
+                                annotations.filter(annotation => annotation.type == 1).length <= annotations.filter(annotation => annotation.type == 0).length * 2 &&
                                 !(annotations.filter(annotation => annotation.type == 1).length == 0 && annotations.filter(annotation => annotation.type == 0).length > 20)
                                 && ("Dieser Schüler ist ziemlich normal.")
                             }

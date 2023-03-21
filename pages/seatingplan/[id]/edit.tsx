@@ -88,17 +88,17 @@ const EditSeatingplan: NextPage<props> = ({students, seats, prevTitle}) => {
         for(let i = newSeatingplan.length-1; i >= 0; i -= 2) {
             // farsighted students should sit in the back and so on and so forth
             let studentToBeSeated
-            if (farSightedStudents.length > 0) {
+            if (shortSightedStudents.length > 0) {
 
-                studentToBeSeated = farSightedStudents.splice(Math.floor(Math.random()*farSightedStudents.length), 1)
+                studentToBeSeated = shortSightedStudents.splice(Math.floor(Math.random()*shortSightedStudents.length), 1)
 
             } else if (nonImpairedStudents.length > 0) {
 
                 studentToBeSeated = nonImpairedStudents.splice(Math.floor(Math.random()*nonImpairedStudents.length), 1)
 
-            } else if (shortSightedStudents.length > 0) {
+            } else if (farSightedStudents.length > 0) {
 
-                studentToBeSeated = shortSightedStudents.splice(Math.floor(Math.random()*shortSightedStudents.length), 1)
+                studentToBeSeated = farSightedStudents.splice(Math.floor(Math.random()*farSightedStudents.length), 1)
 
             }
 
@@ -123,17 +123,17 @@ const EditSeatingplan: NextPage<props> = ({students, seats, prevTitle}) => {
         for(let i = newSeatingplan.length-2; i >= 1; i -= 2) {
             // farsighted students should sit in the back and so on and so forth
             let studentToBeSeated = undefined
-            if (farSightedStudents.length > 0) {
+            if (shortSightedStudents.length > 0) {
 
-                studentToBeSeated = farSightedStudents.splice(Math.floor(Math.random()*farSightedStudents.length), 1)
+                studentToBeSeated = shortSightedStudents.splice(Math.floor(Math.random()*shortSightedStudents.length), 1)
 
             } else if (nonImpairedStudents.length > 0) {
 
                 studentToBeSeated = nonImpairedStudents.splice(Math.floor(Math.random()*nonImpairedStudents.length), 1)
 
-            } else if (shortSightedStudents.length > 0) {
+            } else if (farSightedStudents.length > 0) {
 
-                studentToBeSeated = shortSightedStudents.splice(Math.floor(Math.random()*shortSightedStudents.length), 1)
+                studentToBeSeated = farSightedStudents.splice(Math.floor(Math.random()*farSightedStudents.length), 1)
 
             }
 
@@ -164,17 +164,17 @@ const EditSeatingplan: NextPage<props> = ({students, seats, prevTitle}) => {
         for(let i = newSeatingplan.length-1; i >= 0; i --) {
             // farsighted students should sit in the back and so on and so forth
             let studentToBeSeated
-            if (farSightedStudents.length > 0) {
+            if (shortSightedStudents.length > 0) {
 
-                studentToBeSeated = farSightedStudents.splice(Math.floor(Math.random()*farSightedStudents.length), 1)
+                studentToBeSeated = shortSightedStudents.splice(Math.floor(Math.random()*shortSightedStudents.length), 1)
 
             } else if (nonImpairedStudents.length > 0) {
 
                 studentToBeSeated = nonImpairedStudents.splice(Math.floor(Math.random()*nonImpairedStudents.length), 1)
 
-            } else if (shortSightedStudents.length > 0) {
+            } else if (farSightedStudents.length > 0) {
 
-                studentToBeSeated = shortSightedStudents.splice(Math.floor(Math.random()*shortSightedStudents.length), 1)
+                studentToBeSeated = farSightedStudents.splice(Math.floor(Math.random()*farSightedStudents.length), 1)
 
             }
 
