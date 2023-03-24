@@ -88,43 +88,40 @@ const Session: NextPage<props> = ({session, seats, course, students, answers, an
         "text-amber-700"
     ]
 
-    const calculateStudentRatings = () => {
-        const studentsWithRatings: {student: student, rating: number}[] = []
+   
+    useEffect(() => {
 
-        // how important is quantity and quality?
-        const quantityValue = course.quantityValue / 100
-        const qualityValue = 1 - quantityValue
+        // calculate student ratings
+        const calculateStudentRatings = async () => {
+            const stduentsWithRatings: {student: student, rating: number}[] = []
 
-        students.map(student => {
-            // get answers and annotations of the student
-            const answersOfStudent = answers.filter((answer) => answer.studentId == student.id)
-            const annotationsOfStudent = annotations.filter((annotation) => annotation.studentId == student.id)
+            for(let student of students) {
+                const ratingResponse = await fetch(`/api/student/${student.id}/rating`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        sessionId: session.id
+                    })
+                })
+    
+                const ratingData = await ratingResponse.json()
+    
+                const rating = ratingData.rating
 
-            // calculate avg answer quality
-            let averageAnswerQuality = 0
-            if(answersOfStudent.length > 0) {
-                averageAnswerQuality = answersOfStudent.reduce((totalQuality, nextAnswer) => totalQuality + nextAnswer.quality, 0) / answersOfStudent.length
+                stduentsWithRatings.push({student: student, rating: rating})
             }
 
-            // calculate partial rating
-            let rating = Math.ceil(averageAnswerQuality * qualityValue + answersOfStudent.length * 2 * quantityValue)
+            // sort by rating
+            stduentsWithRatings.sort((a,b) => b.rating - a.rating)
+            
+            setStudentData([...stduentsWithRatings])
+            
+        }
 
-            // finish calculating rating 
-            annotationsOfStudent.map(annotation => annotation.type == 0 ? rating++ : rating--)
-
-            studentsWithRatings.push({student: student, rating: rating})
-        })
-
-    
-        // sort by rating
-        studentsWithRatings.sort((a,b) => b.rating - a.rating)
-
-        setStudentData([...studentsWithRatings])
-    }
-
-    useEffect(() => {
         calculateStudentRatings()
-    }, [])
+    })
 
     const openAnnotationModal = (studentId: string, type: number) => {
         setModalStudentId(studentId)

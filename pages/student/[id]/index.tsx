@@ -9,6 +9,7 @@ import { FaBirthdayCake } from "react-icons/fa"
 import { AiOutlineEyeInvisible } from "react-icons/ai"
 import { HiHandRaised } from "react-icons/hi2";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
 type student = {
     id: string,
@@ -52,11 +53,9 @@ type props = {
     courses: course[],
     answers: answer[],
     annotations: annotation[],
-    sessions: session[],
-    allCourses: course[]
 }
 
-const Student: NextPage<props> = ({student, courses, answers, annotations, sessions, allCourses}) => {
+const Student: NextPage<props> = ({student, courses, answers, annotations}) => {
 
     const router = useRouter()
 
@@ -68,38 +67,27 @@ const Student: NextPage<props> = ({student, courses, answers, annotations, sessi
         "Weitsichtig",
     ]
 
-    let averageAnswerQuality = 0
-    if(answers.length > 0) {
-        averageAnswerQuality = answers.reduce((totalQuality, nextAnswer) => totalQuality + nextAnswer.quality, 0) / answers.length
-    }
+    const [rating, setRating] = useState<number>(0)
+    const [averageAnswerQuality, setAverageAnswerQuality] = useState<number>(0)
 
-    const calculateRating = () => {
+    useEffect(() => {
+        // rating api returns a promise, can't use promises in jsx elements
+        const calculateRating = async () => {
+            const ratingResponse = await fetch(`/api/student/${student.id}/rating`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            })
 
-        let rating = 0
+            const ratingData = await ratingResponse.json()
 
-        sessions.map(session => {
-            const course = allCourses.find(course => course.id == session.courseId)
-            const answersInSession = answers.filter(answer => answer.sessionId == session.id && answer.studentId == student.id)
-            const annotationsInSession = annotations.filter(annotation => annotation.sessionId == session.id && annotation.studentId == student.id)
+            const rating = ratingData.rating
 
-            if(course == undefined) return
-
-            // how important is quantity and quality?
-            const quantityValue = course.quantityValue / 100
-            const qualityValue = 1 - quantityValue
-
-            // calculate partial rating
-            if(answersInSession.length > 0) {
-                rating += Math.ceil(averageAnswerQuality * qualityValue + answersInSession.length * 2 * quantityValue)
-            }
-
-            // finish calculating rating 
-            annotationsInSession.map(annotation => annotation.type == 0 ? rating++ : rating--)
-        })
-
-        return rating
-
-    }
+            setRating(rating)
+        }
+        calculateRating()
+    })
     
     const deleteStudent = async () => {
 
@@ -146,7 +134,7 @@ const Student: NextPage<props> = ({student, courses, answers, annotations, sessi
                     <div className="w-full max-w-2xl flex flex-col items-center justify-center mt-10 space-y-10 px-4">
                         <div className="flex flex-col items-center justify-center w-20 h-20 rounded-full border border-green-500 text-green-500 bg-white">
                             <p className="text-xs">Rating</p>
-                            <p className="font-semibold">{calculateRating()}</p>
+                            <p className="font-semibold">{rating}</p>
                         </div>
                     </div>
 
@@ -170,13 +158,13 @@ const Student: NextPage<props> = ({student, courses, answers, annotations, sessi
                         <p className="w-full text-center text-lg text-stone-800">
                             {averageAnswerQuality == 1 && ("Bei diesem Schüler handelt es sich möglicherweise um einen Neandertaler.")}
                             {averageAnswerQuality == 5 && ("Was ein Streber...")}
-                            {calculateRating() >= 1000 && ("MVP")}
+                            {rating >= 1000 && ("MVP")}
                             {annotations.filter(annotation => annotation.type == 1).length > annotations.filter(annotation => annotation.type == 0).length * 2 && ("Der hier braucht mal eine Lektion.")}
                             {annotations.filter(annotation => annotation.type == 1).length == 0 && annotations.filter(annotation => annotation.type == 0).length > 20 && ("Teachers Pet")}
                             {
                                 averageAnswerQuality != 1 && 
                                 averageAnswerQuality != 5 && 
-                                calculateRating() < 1000 && 
+                                rating < 1000 && 
                                 annotations.filter(annotation => annotation.type == 1).length <= annotations.filter(annotation => annotation.type == 0).length * 2 &&
                                 !(annotations.filter(annotation => annotation.type == 1).length == 0 && annotations.filter(annotation => annotation.type == 0).length > 20)
                                 && ("Dieser Schüler ist ziemlich normal.")

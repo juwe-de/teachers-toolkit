@@ -89,146 +89,81 @@ const Home: NextPage<props> = ({students, courses, answers, annotations, session
         "text-amber-700"
     ]
 
-    const calculateStudentData = () => {
-        const studentsWithRatings: {student: student, rating: number}[] = []
-
-        // calculate the rating of every student
-
-        students.map(student => {
-
-            let rating = 0
-            const answersOfStudent = answers.filter(answer => answer.studentId == student.id)
-            
-            let averageAnswerQuality = 0
-            if(answersOfStudent.length > 0) {
-                averageAnswerQuality = answersOfStudent.reduce((totalQuality, nextAnswer) => totalQuality + nextAnswer.quality, 0) / answersOfStudent.length
-            }
-
-            /*
-            // More efficient solution, but rating differs from the one on the student page
-            const annotationsOfStudent = annotations.filter(annotation => annotation.studentId == student.id)
-            answersOfStudent.map(answer => {
-                const session = sessions.find(session => session.id = answer.sessionId)
-                if(session == undefined) return
-
-                const course = courses.find(course => course.id == session.courseId)
-                if(course == undefined) return
-
-                const quantityValue = course.quantityValue / 100
-                const qualityValue = 1 - quantityValue
-
-                rating += Math.ceil(2 * quantityValue)
-                rating += Math.ceil(averageAnswerQuality / answersOfStudent.length * qualityValue)
-            })
-
-            annotationsOfStudent.map(annotation => {
-                annotation.type == 0 ? rating++ : rating--
-            })
-            */
-            
-            // VERY inefficient, need better solution
-            sessions.map(session => {
-                const course = courses.find(course => course.id == session.courseId)
-                const answersInSession = answers.filter(answer => answer.sessionId == session.id && answer.studentId == student.id)
-                const annotationsInSession = annotations.filter(annotation => annotation.sessionId == session.id && annotation.studentId == student.id)
-
-                if(course == undefined) return
-
-                // how important is quantity and quality?
-                const quantityValue = course.quantityValue / 100
-                const qualityValue = 1 - quantityValue
-
-                // calculate partial rating
-                if(answersInSession.length > 0) {
-                    rating += Math.ceil(averageAnswerQuality * qualityValue + answersInSession.length * 2 * quantityValue)
-                }
-
-                // finish calculating rating 
-                annotationsInSession.map(annotation => annotation.type == 0 ? rating++ : rating--)
-            })
-            
-
-            studentsWithRatings.push({
-                rating: rating,
-                student: student
-            })
-        })
-
-        // sort by rating
-        studentsWithRatings.sort((a,b) => b.rating - a.rating)
-
-        setStudentData([...studentsWithRatings])
-    }
-
-    const calculateCourseData = () => {
-
-        const coursesWithRatings: {course: course, rating: number}[] = []
-        
-        // calculate every cousres rating and the number of students in each course
-
-        courses.map(course => {
-
-            // get all the answers and annotations in the course
-            const answersInCourse = answers.filter(answer => {
-                const session = sessions.find(session => session.id == answer.sessionId)
-                if(session == undefined) return
-                return session.courseId == course.id
-            })
-            const annotationsInCourse = annotations.filter(annotation => {
-                const session = sessions.find(session => session.id == annotation.sessionId)
-                if(session == undefined) return
-                return session.courseId == course.id
-            })
-
-            // how important is quantity and quality?
-            const quantityValue = course.quantityValue / 100
-            const qualityValue = 1 - quantityValue
-
-            let averageAnswerQuality = 0
-            if(answersInCourse.length > 0) {
-                averageAnswerQuality = answersInCourse.reduce((totalQuality, nextAnswer) => totalQuality + nextAnswer.quality, 0) / answers.length
-            }
-
-            // calculate partial rating
-            let rating = 0
-            if(answersInCourse.length > 0) {
-                rating = Math.ceil(averageAnswerQuality * qualityValue + answers.length * 2 * quantityValue)
-            }
-
-            // finish calculating rating 
-            annotationsInCourse.map(annotation => annotation.type == 0 ? rating++ : rating--)
-            
-
-            coursesWithRatings.push({
-                course: course,
-                rating: rating,
-            })
-            
-        })
-
-        // sort courses according to filter selection
-        if(filterMenuValue == 1) {
-            // sort by rating
-            coursesWithRatings.sort((a,b) => b.rating - a.rating)
-        } else if(filterMenuValue == 2) {
-            // sort by student count
-            coursesWithRatings.sort((a,b) => b.course._count.course_participation - a.course._count.course_participation)
-        }
-        else if(filterMenuValue == 3) {
-            // sort by year
-            coursesWithRatings.sort((a,b) => b.course.year - a.course.year)
-        }
-
-        setCourseData([...coursesWithRatings])
-
-    }
+    const SORT_BY_RATING = 1
+    const SORT_BY_NUMBER_OF_STUDENTS = 2
+    const SORT_BY_YEAR = 3
 
     useEffect(() => {
-        calculateStudentData()
+        
+        const calculateStudentRatings = async () => {
+            const stduentsWithRatings: {student: student, rating: number}[] = []
+
+            for(let student of students) {
+                const ratingResponse = await fetch(`/api/student/${student.id}/rating`, {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json"
+                    }
+                })
+    
+                const ratingData = await ratingResponse.json()
+    
+                const rating = ratingData.rating
+
+                stduentsWithRatings.push({student: student, rating: rating})
+            }
+
+            // sort by rating
+            stduentsWithRatings.sort((a,b) => b.rating - a.rating)
+
+            setStudentData([...stduentsWithRatings])
+        }
+
+        calculateStudentRatings()
+
     }, [])
 
     useEffect(() => {
-        calculateCourseData()
+        
+        const calculateCourseRatings = async () => {
+            const coursesWithRatings: {course: course, rating: number}[] = []
+
+            for(let course of courses) {
+                const ratingResponse = await fetch(`/api/course/${course.id}/rating`, {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json"
+                    }
+                })
+
+                const ratingData = await ratingResponse.json()
+
+                coursesWithRatings.push({
+                    course: course,
+                    rating: ratingData.rating
+                })
+            }
+
+            if(filterMenuValue == SORT_BY_RATING) {
+
+                coursesWithRatings.sort((a,b) => b.rating - a.rating)
+
+            } else if(filterMenuValue == SORT_BY_NUMBER_OF_STUDENTS) {
+
+                coursesWithRatings.sort((a,b) => b.course._count.course_participation - a.course._count.course_participation)
+
+            }
+            else if(filterMenuValue == SORT_BY_YEAR) {
+
+                coursesWithRatings.sort((a,b) => b.course.year - a.course.year)
+
+            }
+
+            setCourseData([...coursesWithRatings])
+        }
+
+        calculateCourseRatings()
+
     }, [filterMenuValue])
 
     return (

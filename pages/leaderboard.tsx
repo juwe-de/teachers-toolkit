@@ -64,79 +64,34 @@ const Leaderboard: NextPage<props> = ({students, sessions, answers, annotations,
     // students with their ratings
     const [studentData, setStudentData] = useState<{rating: number, student: student}[]>([])
 
-    const calculateStudentData = () => {
-        const studentsWithRatings: {student: student, rating: number}[] = []
+    useEffect(() => {
+        
+        const calculateStudentRatings = async () => {
+            const stduentsWithRatings: {student: student, rating: number}[] = []
 
-        // calculate the rating of every student
+            for(let student of students) {
+                const ratingResponse = await fetch(`/api/student/${student.id}/rating`, {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json"
+                    }
+                })
+    
+                const ratingData = await ratingResponse.json()
+    
+                const rating = ratingData.rating
 
-        students.map(student => {
-
-            let rating = 0
-            const answersOfStudent = answers.filter(answer => answer.studentId == student.id)
-            
-            let averageAnswerQuality = 0
-            if(answersOfStudent.length > 0) {
-                averageAnswerQuality = answersOfStudent.reduce((totalQuality, nextAnswer) => totalQuality + nextAnswer.quality, 0) / answersOfStudent.length
+                stduentsWithRatings.push({student: student, rating: rating})
             }
 
-            /*
-            // More efficient solution, but rating differs from the one on the student page
-            const annotationsOfStudent = annotations.filter(annotation => annotation.studentId == student.id)
-            answersOfStudent.map(answer => {
-                const session = sessions.find(session => session.id = answer.sessionId)
-                if(session == undefined) return
+            // sort by rating
+            stduentsWithRatings.sort((a,b) => b.rating - a.rating)
 
-                const course = courses.find(course => course.id == session.courseId)
-                if(course == undefined) return
+            setStudentData([...stduentsWithRatings])
+        }
 
-                const quantityValue = course.quantityValue / 100
-                const qualityValue = 1 - quantityValue
+        calculateStudentRatings()
 
-                rating += Math.ceil(2 * quantityValue)
-                rating += Math.ceil(averageAnswerQuality / answersOfStudent.length * qualityValue)
-            })
-
-            annotationsOfStudent.map(annotation => {
-                annotation.type == 0 ? rating++ : rating--
-            })
-            */
-            
-            // VERY inefficient, need better solution
-            sessions.map(session => {
-                const course = courses.find(course => course.id == session.courseId)
-                const answersInSession = answers.filter(answer => answer.sessionId == session.id && answer.studentId == student.id)
-                const annotationsInSession = annotations.filter(annotation => annotation.sessionId == session.id && annotation.studentId == student.id)
-
-                if(course == undefined) return
-
-                // how important is quantity and quality?
-                const quantityValue = course.quantityValue / 100
-                const qualityValue = 1 - quantityValue
-
-                // calculate partial rating
-                if(answersInSession.length > 0) {
-                    rating += Math.ceil(averageAnswerQuality * qualityValue + answersInSession.length * 2 * quantityValue)
-                }
-
-                // finish calculating rating 
-                annotationsInSession.map(annotation => annotation.type == 0 ? rating++ : rating--)
-            })
-            
-
-            studentsWithRatings.push({
-                rating: rating,
-                student: student
-            })
-        })
-
-        // sort by rating
-        studentsWithRatings.sort((a,b) => b.rating - a.rating)
-
-        setStudentData([...studentsWithRatings])
-    }
-
-    useEffect(() => {
-        calculateStudentData()
     }, [])
 
     const leaderboardColors = [

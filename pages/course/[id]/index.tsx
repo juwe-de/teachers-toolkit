@@ -4,13 +4,13 @@ import Footer from "../../../components/Footer"
 import Header from "../../../components/Header"
 
 import prisma from "../../../components/Client"
-import { MdOutlineClass, MdSubject, MdEdit, MdCancel } from "react-icons/md"
+import { MdOutlineClass, MdSubject, MdEdit, MdCancel, MdSettingsRemote } from "react-icons/md"
 import { AiOutlineClockCircle } from "react-icons/ai"
 import { useEffect, useState } from "react"
 import { BsGenderMale, BsGenderFemale, BsFilterSquare } from "react-icons/bs"
 import { useRouter } from "next/router"
 import Link from "next/link"
-import { GiPodium } from "react-icons/gi"
+import { GiPodium, GiSwitzerland } from "react-icons/gi"
 
 type course = {
     id: string,
@@ -69,76 +69,76 @@ type props = {
     sessions: session[]
 }
 
-const Course: NextPage<props> = ({course, students, answers, annotations, groupings, seatingplans, sessions}) => {
+const Course: NextPage<props> = ({course, students, groupings, seatingplans, sessions}) => {
 
     const created = new Date(parseInt(course.created))
-    const [studentData, setStudentData] = useState<{student: student, rating: number}[]>([])
 
     const [filterMenuOpen, setFilterMenuOpen] = useState<boolean>(false)
     const [filterMenuValue, setFilterMenuValue] = useState<number>(1)
+    const SORT_BY_NAME = 1
+    const SORT_BY_RATING = 2
+
+    const [studentData, setStudentData] = useState<{student: student, rating: number}[]>([])
+    const [courseRating, setCourseRating] = useState<number>(0)
 
     const router = useRouter()
 
-    const calculateStudentRatings = () => {
-        const studentsWithRatings: {student: student, rating: number}[] = []
+    useEffect(() => {
 
-        // how important is quantity and quality?
-        const quantityValue = course.quantityValue / 100
-        const qualityValue = 1 - quantityValue
+        // calculate student ratings
+        const calculateStudentRatings = async () => {
+            const stduentsWithRatings: {student: student, rating: number}[] = []
 
-        students.map(student => {
-            // get answers and annotations of the student
-            const answersOfStudent = answers.filter((answer: answer) => answer.studentId == student.id)
-            const annotationsOfStudent = annotations.filter((annotation: annotation) => annotation.studentId == student.id)
+            for(let student of students) {
+                const ratingResponse = await fetch(`/api/student/${student.id}/rating`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        courseId: course.id
+                    })
+                })
+    
+                const ratingData = await ratingResponse.json()
+    
+                const rating = ratingData.rating
 
-            // calculate avg answer quality
-            let averageAnswerQuality = 0
-            if(answersOfStudent.length > 0) {
-                averageAnswerQuality = answersOfStudent.reduce((totalQuality, nextAnswer) => totalQuality + nextAnswer.quality, 0) / answersOfStudent.length
+                stduentsWithRatings.push({student: student, rating: rating})
             }
 
-            // calculate partial rating
-            let rating = Math.ceil(averageAnswerQuality * qualityValue + answersOfStudent.length * 2 * quantityValue)
+            if(filterMenuValue == SORT_BY_NAME) {
+                stduentsWithRatings.sort((a,b) => a.student.sirname.localeCompare(b.student.sirname))
+            } else if(filterMenuValue == SORT_BY_RATING) {
+                stduentsWithRatings.sort((a,b) => b.rating - a.rating)
+            }
 
-            // finish calculating rating 
-            annotationsOfStudent.map(annotation => annotation.type == 0 ? rating++ : rating--)
-
-            studentsWithRatings.push({student: student, rating: rating})
-        })
-
-        if(filterMenuValue == 1) {
-            // sort by name
-            studentsWithRatings.sort((a,b) => a.student.sirname.localeCompare(b.student.sirname))
-        } else if(filterMenuValue == 2) {
-            // sort by rating
-            studentsWithRatings.sort((a,b) => b.rating - a.rating)
+            setStudentData([...stduentsWithRatings])
+            
         }
 
-        setStudentData([...studentsWithRatings])
-    }
+        calculateStudentRatings()
 
-    const calculateCourseRating = () => {
-        // how important is quantity and quality?
-        const quantityValue = course.quantityValue / 100
-        const qualityValue = 1 - quantityValue
-
-        let averageAnswerQuality = 0
-        if(answers.length > 0) {
-            averageAnswerQuality = answers.reduce((totalQuality, nextAnswer) => totalQuality + nextAnswer.quality, 0) / answers.length
-        }
-
-        // calculate partial rating
-        let rating = Math.ceil(averageAnswerQuality * qualityValue + answers.length * 2 * quantityValue)
-
-        // finish calculating rating 
-        annotations.map(annotation => annotation.type == 0 ? rating++ : rating--)
-
-        return rating
-    }
+    }, [filterMenuValue])
 
     useEffect(() => {
-        calculateStudentRatings()
-    }, [filterMenuValue])
+
+        const calculateCourseRating = async () => {
+            const ratingResponse = await fetch(`/api/course/${course.id}/rating`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            })
+
+            const ratingData = await ratingResponse.json()
+
+            setCourseRating(ratingData.rating)
+        }
+
+        calculateCourseRating()
+
+    })
 
     const createSession = () => {
         if(seatingplans.length == 0) {
@@ -188,7 +188,7 @@ const Course: NextPage<props> = ({course, students, answers, annotations, groupi
 
                         <div className="flex flex-col items-center justify-center w-20 h-20 rounded-full border border-green-500 text-green-500 bg-white">
                             <p className="text-xs">Kurs-Rating</p>
-                            <p className="font-semibold">{calculateCourseRating()}</p>
+                            <p className="font-semibold">{courseRating}</p>
                         </div>
 
                         <div className="w-full bg-white flex flex-col items-center justify-center border border-zinc-500 rounded-md !mt-10 p-3 relative">
@@ -212,18 +212,16 @@ const Course: NextPage<props> = ({course, students, answers, annotations, groupi
                                 {/* List all of the students */}
                                 {
                                     students.length == 0 ? (<p>In diesem Kurs sind keine Schüler...</p>) : studentData.map(object => {
-                                        const rating = object.rating
-                                        const student = object.student
                                         return(
-                                            <Link href={`/student/${student.id}`} key={student.id} className="flex flex-row justify-between items-center w-full text-stone-800 text-lg border-b border-zinc-500 border-dashed last:border-0 py-2 cursor-pointer hover:bg-slate-50" >
+                                            <Link href={`/student/${object.student.id}`} key={object.student.id} className="flex flex-row justify-between items-center w-full text-stone-800 text-lg border-b border-zinc-500 border-dashed last:border-0 py-2 cursor-pointer hover:bg-slate-50" >
                                                 
                                                 <div className="w-80 flex flex-row items-center justify-between">
-                                                    <p className="w-full">{student.sirname}, {student.name}</p>
-                                                    {student.gender == 0 ? (<BsGenderMale />) : (<BsGenderFemale />)}
+                                                    <p className="w-full">{object.student.sirname}, {object.student.name}</p>
+                                                    {object.student.gender == 0 ? (<BsGenderMale />) : (<BsGenderFemale />)}
                                                 </div>
                                                 <div className="flex flex-row space-x-1 items-center justify-center w-20">
                                                     <GiPodium className="w-5 h-5"/>
-                                                    <p className="text-right">{rating}</p>
+                                                    <p className="text-right">{object.rating}</p>
                                                 </div>
                                                 
                                             </Link>
@@ -392,26 +390,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         }
     })
 
-    const answers = await prisma.answer.findMany({
-        where: {
-            session: {
-                course: {
-                    id: id?.toString()
-                }
-            }
-        }
-    })
-
-    const annotations = await prisma.annotation.findMany({
-        where: {
-            session: {
-                course: {
-                    id: id?.toString()
-                }
-            }
-        }
-    })
-
     const groupings = await prisma.grouping.findMany({
         where: {
             course: {
@@ -439,7 +417,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     sessions.sort((a, b) => new Date(parseInt(b.date)).getTime() - new Date(parseInt(a.date)).getTime())
 
     return {
-        props: {course, students, answers, annotations, groupings, seatingplans, sessions}
+        props: {course, students, groupings, seatingplans, sessions}
     }
 }
 
