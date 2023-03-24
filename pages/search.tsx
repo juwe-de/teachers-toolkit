@@ -58,7 +58,7 @@ const Search: NextPage<props> = ({students, courses, seatingplans, groupings}) =
 
     const search = () => {
         setSearchedStudents([...students.filter(student => {
-            return student.name.toLowerCase().includes(term.toLowerCase()) || student.sirname.includes(term)
+            return student.name.toLowerCase().includes(term.toLowerCase()) || student.sirname.toLowerCase().includes(term)
         })])
         setSearchedCourses([...courses.filter(course => {
             return course.title.toLowerCase().includes(term.toLowerCase())
