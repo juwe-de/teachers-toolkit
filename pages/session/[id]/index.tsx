@@ -6,12 +6,12 @@ import Seat from "../../../components/session/Seat";
 import { useEffect, useState } from "react";
 import AnnotationModal from "../../../components/session/AnnotationModal";
 import AnswerModal from "../../../components/session/AnswerModal";
-import SingletonRouter, { Router, useRouter } from "next/router";
+import { useRouter } from "next/router";
 import EndSessionModal from "../../../components/session/EndSessionModal";
 import { AiOutlineClockCircle } from "react-icons/ai";
-import { MdCancel, MdOutlineClass, MdSubject } from "react-icons/md";
+import { MdCancel } from "react-icons/md";
 import { BsFillCalendarDateFill } from "react-icons/bs";
-import { BsGenderFemale, BsGenderMale, BsFillHandThumbsUpFill, BsFillHandThumbsDownFill } from "react-icons/bs";
+import { BsFillHandThumbsUpFill, BsFillHandThumbsDownFill } from "react-icons/bs";
 import { HiHandRaised } from "react-icons/hi2"
 import { GiPodium } from "react-icons/gi";
 import Link from "next/link";
@@ -90,8 +90,6 @@ const Session: NextPage<props> = ({session, seats, course, students, answers, an
 
    
     useEffect(() => {
-
-        // calculate student ratings
         const calculateStudentRatings = async () => {
             const stduentsWithRatings: {student: student, rating: number}[] = []
 
@@ -256,7 +254,7 @@ const Session: NextPage<props> = ({session, seats, course, students, answers, an
                                     const rating = object.rating
                                     const student = object.student
                                     return(
-                                        <div key={student.id} className="flex flex-row justify-between items-center w-full text-stone-800 text-lg border-b border-zinc-500 border-dashed last:border-0 py-2 cursor-pointer hover:bg-slate-50 space-x-2">
+                                        <Link href={`/student/${student.id}`} key={student.id} className="flex flex-row justify-between items-center w-full text-stone-800 text-lg border-b border-zinc-500 border-dashed last:border-0 py-2 cursor-pointer hover:bg-slate-50 space-x-2">
                                             <p className={`${index <= 2 ? leaderboardColors[index] : "text-stone-800"} ${index <= 2 ? "font-semibold" : ""}`}>
                                                 {index + 1}.
                                             </p>
@@ -267,7 +265,7 @@ const Session: NextPage<props> = ({session, seats, course, students, answers, an
                                                 <GiPodium className="w-5 h-5"/>
                                                 <p className="text-right">{rating}</p>
                                             </div>
-                                        </div>
+                                        </Link>
                                     )
                                 })
                             }

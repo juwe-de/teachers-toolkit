@@ -31,7 +31,8 @@ const InactiveWidget: FunctionComponent<props> = ({courses, sessions}) => {
         return !sessions.find(session => {
             const dateOfSession = new Date(parseInt(session.date))
             const today = new Date()
-            return session.courseId == course.id && today.getTime() - dateOfSession.getTime() < 1000 * 60 * 60 * 24 * 21
+            const ONE_WEEK = 1000 * 60 * 60 * 24 * 21
+            return session.courseId == course.id && today.getTime() - dateOfSession.getTime() < ONE_WEEK
         })
     })
 
