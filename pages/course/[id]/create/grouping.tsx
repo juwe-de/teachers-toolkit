@@ -75,7 +75,6 @@ const CreateGrouping: NextPage<props> = ({ students }) => {
 
     useEffect(() => {
         createGroups()
-        console.log(groups)
     }, [groupSize])
 
     const reset = () => {
@@ -184,8 +183,6 @@ const CreateGrouping: NextPage<props> = ({ students }) => {
         newGroups[groupIndex] = groupToRename
 
         setGroups([...newGroups])
-
-        console.log(groups)
     }
 
     const generateRandomly = () => {
@@ -228,7 +225,6 @@ const CreateGrouping: NextPage<props> = ({ students }) => {
 
         if(!validateTitles()) {
             alert("Bitte stelle sicher, dass alle Gruppen und die Gruppeneinteilungen einen Titel haben!")
-            console.log("lul")
             return
         }
         

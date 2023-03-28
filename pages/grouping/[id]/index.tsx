@@ -32,13 +32,19 @@ type grouping = {
     created: string,
 }
 
+type course = {
+    id: string,
+    title: string,
+}
+
 type props = {
     grouping: grouping,
     groups: group[],
-    studentsNotAssigned: student[]
+    studentsNotAssigned: student[],
+    course: course
 }
 
-const Grouping: NextPage<props> = ({ grouping, groups, studentsNotAssigned }) => {
+const Grouping: NextPage<props> = ({ grouping, groups, studentsNotAssigned, course }) => {
 
     const router = useRouter()
 
@@ -151,6 +157,10 @@ const Grouping: NextPage<props> = ({ grouping, groups, studentsNotAssigned }) =>
 
                         </div>)}
 
+                        <Link href={`/course/${course.id}`} className="text-blue-500 underline text-xl mt-10">
+                            Zurück zu {course.title}
+                        </Link>
+
                         <button onClick={() => deleteGrouping()} className="bg-red-500 text-slate-50 text-xl text-center p-2 rounded-md flex flex-row items-center justify-center font-semibold space-x-3"><MdCancel className="h-6 w-6 mr-3" /> Löschen</button>
 
                     </div>
@@ -235,10 +245,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         }
     })
 
-    console.log(studentsNotAssigned)
-
     return {
-        props: {grouping, groups, studentsNotAssigned}
+        props: {grouping, groups, studentsNotAssigned, course}
     }
 }
 

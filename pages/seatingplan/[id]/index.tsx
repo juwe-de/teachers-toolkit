@@ -32,13 +32,19 @@ type seatingplan = {
     created: string,
 }
 
+type course = {
+    id: string,
+    title: string,
+}
+
 type props = {
     seats: seat[],
     seatingplan: seatingplan,
-    studentsNotAssigned: student[]
+    studentsNotAssigned: student[],
+    course: course
 }
 
-const Seatingplan: NextPage<props> = ({seats, seatingplan, studentsNotAssigned}) => {
+const Seatingplan: NextPage<props> = ({seats, seatingplan, studentsNotAssigned, course}) => {
 
     const router = useRouter()
     const created = new Date(parseInt(seatingplan.created))
@@ -211,6 +217,10 @@ const Seatingplan: NextPage<props> = ({seats, seatingplan, studentsNotAssigned})
                     </div>)}
                 </div>
 
+                <Link href={`/course/${course.id}`} className="text-blue-500 underline text-xl mt-10">
+                    Zurück zu {course.title}
+                </Link>
+
                 <div className="w-full flex items-center justify-center mt-3">
                     <button onClick={() => deleteSeatingplan()} className="bg-red-500 text-slate-50 text-xl text-center p-2 rounded-md flex flex-row items-center justify-center font-semibold space-x-3"><MdCancel className="h-6 w-6 mr-3" /> Löschen</button>
                 </div>
@@ -230,6 +240,14 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     const seatingplan = await prisma.seatingplan.findFirst({
         where: {
             id: id,
+        }
+    })
+
+    if(seatingplan == undefined) return {props: {}}
+
+    const course = await prisma.course.findFirst({
+        where: {
+            id: seatingplan.courseId?.toString()
         }
     })
 
@@ -290,7 +308,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     })
 
     return {
-        props: {seats, seatingplan, studentsNotAssigned}
+        props: {seats, seatingplan, studentsNotAssigned, course}
     }
 }
 

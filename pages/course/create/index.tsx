@@ -125,15 +125,13 @@ const Create: NextPage<props> = ({ existingStudents }) => {
 
         // hide the form
         setAddingStudent(!addingStudent)
-
-        console.log(students)
     }
 
     const save = async () => {
         // creating a course without students is very unusual, so ask for confirmation
         if(students.length == 0 && existingStudentsInCourse.length == 0 && !confirm("Möchtest du wirklich einen Kurs ohne Schüler erstellen?")) return
 
-        await fetch("/api/course/create", {
+        const createCourseResopnse = await fetch("/api/course/create", {
             body: JSON.stringify({
                 title: courseTitle,
                 subject: subject,
@@ -146,11 +144,11 @@ const Create: NextPage<props> = ({ existingStudents }) => {
                 "Content-Type": "application/json"
             },
             method: "POST"
-        }).then(response => {
-            console.log(response.json)
         })
 
-        router.push("/")
+        const createCourseData = await createCourseResopnse.json()
+
+        router.push(`/course/${createCourseData.courseId}`)
     }
 
     const cancel = () => {

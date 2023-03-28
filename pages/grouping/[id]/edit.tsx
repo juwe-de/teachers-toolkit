@@ -183,8 +183,6 @@ const EditGrouping: NextPage<props> = ({ grouping, exisitingGroups, studentsWith
         newGroups[groupIndex] = groupToRename
 
         setGroups([...newGroups])
-
-        console.log(groups)
     }
 
     const generateRandomly = () => {
@@ -443,8 +441,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
             }
         }
     })
-
-    console.log(studentsWithoutGroup)
 
     return {
         props: {grouping, exisitingGroups, studentsWithoutGroup, allStudents}

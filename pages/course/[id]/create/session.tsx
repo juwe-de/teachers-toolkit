@@ -51,7 +51,7 @@ const CreateSession: NextPage<props> = ({seatingplans}) => {
                     <div className="flex flex-col w-full items-center justify-center space-y-1 !mt-5">
                         <p className="w-full text-left text-xl text-stone-800">Bitte wähle einen Sitzplan aus</p>
 
-                        <select value={seatingplan} onChange={e => {setSeatingplan(e.target.value); console.log(seatingplan)}} id="select-1" className="py-1 border border-zinc-500 rounded-md bg-white w-full text-lg text-stone-800 px-2 focus:outline-none text-center">
+                        <select value={seatingplan} onChange={e => {setSeatingplan(e.target.value)}} id="select-1" className="py-1 border border-zinc-500 rounded-md bg-white w-full text-lg text-stone-800 px-2 focus:outline-none text-center">
                             {seatingplans.map(seatingplan => {
                                 return (
                                     <option value={seatingplan.id}>{seatingplan.title}</option>

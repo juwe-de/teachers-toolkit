@@ -50,7 +50,7 @@ export default async function handler(request: NextApiRequest, response: NextApi
     try {
 
         // create the course
-        await prisma.course.create({
+        const createCourse = prisma.course.create({
             data: {
                 title,
                 subject,
@@ -63,7 +63,12 @@ export default async function handler(request: NextApiRequest, response: NextApi
             }
         })
 
-        response.status(200).json({message: "course created successfully"})
+        const createCourseResult = await prisma.$transaction([createCourse])
+
+        response.status(200).json({
+            message: "course created",
+            courseId: createCourseResult[0].id
+        })
 
     } catch(error) {
         console.log(error)
