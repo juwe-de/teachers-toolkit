@@ -70,23 +70,20 @@ const CreateSeatingplan: NextPage<props> = ({students}) => {
         if(studentsNotAssigned.length == 0) reset()
 
         if(boysNextToGirls){ 
-            placeBoysNextToGirls()
+            placeBoysNextToGirls(studentsNotAssigned)
         }
         else {
-            placeStudentsNormally()
+            placeStudentsNormally(studentsNotAssigned)
         }
 
     }
 
-    const placeBoysNextToGirls = () => {
+    const placeBoysNextToGirls = (students: student[]) => {
 
-        const maleStudents = studentsNotAssigned.filter(student => student.gender == 0)
-        const femaleStudents = studentsNotAssigned.filter(student => student.gender == 1)
+        const maleStudents = students.filter(student => student.gender == 0)
+        const femaleStudents = students.filter(student => student.gender == 1)
 
-        if(maleStudents.length == 0 || femaleStudents.length == 0) {
-            placeStudentsNormally()
-            return
-        }
+        const leftOverStudents = []
 
         const newSeatingplan = seatingplan
 
@@ -126,6 +123,9 @@ const CreateSeatingplan: NextPage<props> = ({students}) => {
             newSeatingplan[i].student = studentToBeSeated[0]
         }
 
+        // some students might not have benn seated this way
+        leftOverStudents.push(...shortSightedStudents, ...farSightedStudents, ...nonImpairedStudents)
+
         // now place the female students
 
         shortSightedStudents = femaleStudents.filter(student => student.visuals == 1)
@@ -133,7 +133,7 @@ const CreateSeatingplan: NextPage<props> = ({students}) => {
         nonImpairedStudents = femaleStudents.filter(student => student.visuals == 0)
 
         for(let i = newSeatingplan.length-2; i >= 1; i -= 2) {
-            // farsighted students should sit in the back and so on and so forth
+            // farsighted students should sit in the back and so on and so forthö
             let studentToBeSeated = undefined
             if (shortSightedStudents.length > 0) {
 
@@ -160,16 +160,23 @@ const CreateSeatingplan: NextPage<props> = ({students}) => {
             newSeatingplan[i].student = studentToBeSeated[0]
         }
 
+        // some students might not have benn seated this way
+        leftOverStudents.push(...shortSightedStudents, ...farSightedStudents, ...nonImpairedStudents)
+
         setStudentsNotAssigned([])
         setSeatingplan([...newSeatingplan])
 
+        // place the left over students, if there are any
+        placeStudentsNormally(leftOverStudents)
+
     }
 
-    const placeStudentsNormally = () => {
+    const placeStudentsNormally = (students: student[]) => {
         // sort students by visual impairment
-        const shortSightedStudents = studentsNotAssigned.filter(student => student.visuals == 1)
-        const farSightedStudents = studentsNotAssigned.filter(student => student.visuals == 2)
-        const nonImpairedStudents = studentsNotAssigned.filter(student => student.visuals == 0)
+        
+        const shortSightedStudents = students.filter(student => student.visuals == 1)
+        const farSightedStudents = students.filter(student => student.visuals == 2)
+        const nonImpairedStudents = students.filter(student => student.visuals == 0)
 
         const newSeatingplan = seatingplan
 

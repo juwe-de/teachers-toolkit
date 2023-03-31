@@ -10,7 +10,7 @@ type props = {
 
 const AnswerModal: FunctionComponent<props> = ({close, save, show}) => {
 
-    const [quality, setQuality] = useState<number>(0)
+    const [quality, setQuality] = useState<number>(3)
 
 
     return (
@@ -39,7 +39,7 @@ const AnswerModal: FunctionComponent<props> = ({close, save, show}) => {
                 </div>
 
                 <div className="flex flex-row items-center justify-center space-x-4 mt-5">
-                    <button onClick={() => {save(quality); setQuality(5)}} className="text-lg font-semibold text-slate-50 bg-blue-400 border border-blue-400 p-2 rounded-full">
+                    <button onClick={() => {save(quality); setQuality(3)}} className="text-lg font-semibold text-slate-50 bg-blue-400 border border-blue-400 p-2 rounded-full">
                         Speichern
                     </button>
                     <button onClick={() => close()} className="text-lg font-semibold p-2 text-red-500 hover:text-slate-50 border border-red-500 rounded-full hover:bg-red-500">
