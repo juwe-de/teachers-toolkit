@@ -1,27 +1,48 @@
-# Next.js + Tailwind CSS Example
+# Teacher's Toolkit
 
-This example shows how to use [Tailwind CSS](https://tailwindcss.com/) [(v3.2)](https://tailwindcss.com/blog/tailwindcss-v3-2) with Next.js. It follows the steps outlined in the official [Tailwind docs](https://tailwindcss.com/docs/guides/nextjs).
+A web-application for teachers to manage courses, students, groupings, seatingplans and sessions.
+Featuring leaderboards and summary-pages.
 
-## Deploy your own
+## About this project
 
-Deploy the example using [Vercel](https://vercel.com?utm_source=github&utm_medium=readme&utm_campaign=next-example) or preview live with [StackBlitz](https://stackblitz.com/github/vercel/next.js/tree/canary/examples/with-tailwindcss)
+![image](https://user-images.githubusercontent.com/69693275/229136407-fdf3937b-75e9-49f5-a196-bd2a1d5d982d.png)
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/git/external?repository-url=https://github.com/vercel/next.js/tree/canary/examples/with-tailwindcss&project-name=with-tailwindcss&repository-name=with-tailwindcss)
+### Built with
+
+- Next JS
+- Tailwind CSS
+- Prisma
+
+### Key functionality
+
+- create courses and within these courses...
+  - create students
+  - create or generate groupings
+  - create or generate seatingplans
+  - start sessions
+- keep track of answers and annotations for students
+- calculate a rating for each student and a course
+- leaderboards / filters based on these rankings
+- summary pages for e.g. sessions
 
 ## How to use
 
-Execute [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app) with [npm](https://docs.npmjs.com/cli/init), [Yarn](https://yarnpkg.com/lang/en/docs/cli/create/), or [pnpm](https://pnpm.io) to bootstrap the example:
+First, clone this repository:
 
 ```bash
-npx create-next-app --example with-tailwindcss with-tailwindcss-app
+git clone https://github.com/jew-de/teachers-toolkit.git
 ```
+
+Run this command to create an optimized production build:
 
 ```bash
-yarn create next-app --example with-tailwindcss with-tailwindcss-app
+npm run build
 ```
+
+Start the local Server:
 
 ```bash
-pnpm create next-app --example with-tailwindcss with-tailwindcss-app
+npm run start
 ```
 
-Deploy it to the cloud with [Vercel](https://vercel.com/new?utm_source=github&utm_medium=readme&utm_campaign=next-example) ([Documentation](https://nextjs.org/docs/deployment)).
+And enjoy!
