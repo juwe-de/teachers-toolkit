@@ -1,4 +1,4 @@
-# Teacher's Toolkit
+# Teachers Toolkit
 
 A web-application for teachers to manage courses, students, groupings, seatingplans and sessions.
 Featuring leaderboards and summary-pages.
